@@ -11,10 +11,14 @@ export class AppController {
     this.logger.log('app controller booted');
   }
 
-  @Get()
+  @Get('/hello')
   getHello(@Headers() headers, @Query('logger') logger): string {
-    // console.log(logger);
-    logger.log('Youpi request received', 'app.getHello', headers);
+    logger.log('Hello request received', 'app.getHello', headers);
     return this.appService.getHello();
+  }
+  @Get('/hi')
+  getHi(@Headers() headers, @Query('logger') logger): string {
+    logger.log('Hi request received', 'app.getHi', headers);
+    return "Hi"
   }
 }

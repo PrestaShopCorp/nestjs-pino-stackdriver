@@ -49,29 +49,21 @@ export class AppController {
 }
 ```
 
-## Correlation ID
+## Correlation ID and optionnal tracer
 Add in your request a correlation id if none provided
 
 ```typescript
-import { CorrelationIdMiddleware } from 'nestjs-pino-stackdriver';
+import { CorrelationTracerMiddleware } from 'nestjs-pino-stackdriver';
 async function bootstrap() {
-  const logger = new Logger();
-  const app = await NestFactory.create(AppModule);
-  app.use(CorrelationIdMiddleware(logger));
-  await app.listen(3000);
-}
-bootstrap();
-```
+  app.use(
+    CorrelationTracerMiddleware({
+      // To generate logger on each request and inject correlation id
+      app: app,
+      // Optionnal to start tracing
+      agent: require('@google-cloud/trace-agent').start(),
+    }),
+  );
 
-## Tracer
-Add tracer info in your log
-
-```typescript
-import { TracerMiddleware } from 'nestjs-pino-stackdriver';
-async function bootstrap() {
-  const logger = new Logger();
-  const app = await NestFactory.create(AppModule);
-  app.use(TracerMiddleware(logger))
   await app.listen(3000);
 }
 bootstrap();
@@ -89,7 +81,6 @@ export class AppController {
 
   @Get()
   getHello(@Headers() headers, @Query('logger') logger): string {
-    // console.log(logger);
     logger.log('request received', 'app.getHello', headers);
     return this.appService.getHello();
   }

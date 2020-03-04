@@ -63,4 +63,9 @@ export class Logger implements LoggerService {
     }
     this.logger.verbose(msg, context, ...args);
   }
+  clone(): Logger {
+    const copy = new (this.constructor as { new (): Logger })();
+    Object.assign(copy, this);
+    return copy;
+  }
 }

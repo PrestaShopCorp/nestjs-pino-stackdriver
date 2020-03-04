@@ -1,16 +1,20 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { Logger } from '../../src/logger.service';
-import { CorrelationIdMiddleware } from '../../src/correlation-id.middleware';
-import { TracerMiddleware } from '../../src/tracer.middleware';
+import { CorrelationTracerMiddleware, Logger } from '../../src/';
 
 async function bootstrap() {
-  const logger = new Logger();
+  const appLogger = new Logger();
   const app = await NestFactory.create(AppModule, {
-    logger: logger,
+    logger: appLogger,
   });
-  app.use(CorrelationIdMiddleware(logger));
-  app.use(TracerMiddleware(logger))
+
+  app.use(
+    CorrelationTracerMiddleware({
+      app: app,
+      agent: require('@google-cloud/trace-agent').start(),
+    }),
+  );
+
   await app.listen(3000);
 }
 
