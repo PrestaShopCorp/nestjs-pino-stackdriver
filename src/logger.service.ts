@@ -32,7 +32,7 @@ export class Logger implements LoggerService {
 
     this.logger.error(
       {
-        msg: isString(msg) ? msg : 'Error',
+        message: isString(msg) ? msg : 'Error',
         ...(isObject(msg) ? msg : {}),
         trace,
       },
