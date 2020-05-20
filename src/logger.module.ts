@@ -9,7 +9,7 @@ import { LoggerOptions } from 'pino';
   exports: [Logger],
 })
 export class LoggerModule {
-  static forRoot(config: LoggerOptions) {
+  static forRoot(config?: LoggerOptions) {
     const configProvider = {
       provide: PinoLoggerConfig,
       useValue: new PinoLoggerConfig(config),
