@@ -1,6 +1,6 @@
 {
   "name": "nestjs-pino-stackdriver",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "description": "",
   "main": "dist",
   "keywords": [

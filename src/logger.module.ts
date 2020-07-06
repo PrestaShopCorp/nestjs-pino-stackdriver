@@ -1,11 +1,16 @@
-import { Global, Module } from '@nestjs/common';
-import { Logger } from './logger.service';
+import { Global, Module, Logger } from '@nestjs/common';
+import { Logger as PinoLogger } from './logger.service';
 import { PinoLoggerConfig } from './logger.config';
 import { LoggerOptions } from 'pino';
 
 @Global()
 @Module({
-  providers: [Logger],
+  providers: [
+    {
+      provide: Logger,
+      useValue: new PinoLogger(),
+    },
+  ],
   exports: [Logger],
 })
 export class LoggerModule {
@@ -16,8 +21,14 @@ export class LoggerModule {
     };
     return {
       module: LoggerModule,
-      providers: [Logger, configProvider],
-      exports: [Logger, configProvider],
+      providers: [
+        configProvider,
+        {
+          provide: Logger,
+          useValue: new PinoLogger(new PinoLoggerConfig(config)),
+        },
+      ],
+      exports: [Logger],
     };
   }
 }
