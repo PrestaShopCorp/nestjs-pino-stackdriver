@@ -5,40 +5,40 @@ import { PinoLoggerConfig } from './logger.config';
 
 @Injectable({ scope: Scope.TRANSIENT })
 export class Logger implements LoggerService {
-  private logger: pino.Logger;
+  private pino: pino.Logger;
   private readonly options: any;
 
   constructor(options: PinoLoggerConfig = new PinoLoggerConfig()) {
     this.options = options.get();
-    this.logger = pino(this.options);
+    this.pino = pino(this.options);
   }
 
   setContext(context: string) {
-    this.logger = pino(this.options).child({ context });
+    this.pino = pino(this.options).child({ context });
   }
 
   setLabels(context: object) {
-    this.logger = this.logger.child({ ...context });
+    this.pino = this.pino.child({ ...context });
   }
 
   info(msg: any, context?: string, ...args: any[]) {
     if (context) {
-      this.logger.child({ context }).infoq(msg, ...args);
+      this.pino.child({ context }).infoq(msg, ...args);
       return;
     }
-    this.logger.info(msg, ...args);
+    this.pino.info(msg, ...args);
   }
 
   log(msg: any, context?: string, ...args: any[]) {
     if (context) {
-      this.logger.child({ context }).info(msg, ...args);
+      this.pino.child({ context }).info(msg, ...args);
       return;
     }
-    this.logger.info(msg, ...args);
+    this.pino.info(msg, ...args);
   }
 
   error(msg: any, trace?: string, context?: string, ...args: any[]) {
-    this.logger.error(
+    this.pino.error(
       {
         message: isString(msg) ? msg : 'Error',
         ...(isObject(msg) ? msg : {}),
@@ -50,26 +50,26 @@ export class Logger implements LoggerService {
 
   warn(msg: any, context?: string, ...args: any[]) {
     if (context) {
-      this.logger.child({ context }).warn(msg, ...args);
+      this.pino.child({ context }).warn(msg, ...args);
       return;
     }
-    this.logger.warn(msg, ...args);
+    this.pino.warn(msg, ...args);
   }
 
   debug(msg: any, context?: string, ...args: any[]) {
     if (context) {
-      this.logger.child({ context }).debug(msg, ...args);
+      this.pino.child({ context }).debug(msg, ...args);
       return;
     }
-    this.logger.debug(msg, context, ...args);
+    this.pino.debug(msg, context, ...args);
   }
 
   verbose(msg: any, context?: string, ...args: any[]) {
     if (context) {
-      this.logger.child({ context }).verbose(msg, ...args);
+      this.pino.child({ context }).verbose(msg, ...args);
       return;
     }
-    this.logger.verbose(msg, context, ...args);
+    this.pino.verbose(msg, context, ...args);
   }
 
   clone(): Logger {
