@@ -1,5 +1,5 @@
-
 # NestJS Stackdriver
+
 ## Using the logger
 Configured to be stackdriver compliant.
 
@@ -17,8 +17,9 @@ bootstrap();
 ```
 
 ### Using inside the app
+
 #### Import it in your module 
-Configure it using pino options  https://github.com/pinojs/pino/blob/master/docs/api.md
+Configure it using pino options https://github.com/pinojs/pino/blob/master/docs/api.md#options
 ```typescript
 import { LoggerModule } from 'nestjs-pino-stackdriver';
 @Module({
@@ -30,6 +31,7 @@ import { LoggerModule } from 'nestjs-pino-stackdriver';
 export class AppModule {
 }
 ```
+
 #### Inject it from everywhere
 ```typescript
 import { Controller, Get, Logger } from '@nestjs/common';
@@ -71,7 +73,7 @@ bootstrap();
 
 ## Use log with trace and correlation id
 ```typescript
-import { Controller, Get, Headers, , Query } from '@nestjs/common';
+import { Controller, Get, Headers, Query } from '@nestjs/common';
 
 @Controller()
 export class AppController {
@@ -91,6 +93,7 @@ Output in production
 ```json
  {"severity":"info","correlation_id":"4NTtNp4X","logging.googleapis.com/trace":"281fe620078d4562b311712cf42faefd","context":"app.getHello","message":"request received {\"host\":\"localhost:3000\",\"user-agent\":\"curl/7.64.1\",\"accept\":\"*/*\",\"x-correlation-id\":\"4NTtNp4X\"}","v":1}
 ```
+
 Or locally
 ```
 [2020-03-03 19:24:00.673 +0000] INFO : request received {"host":"localhost:3000","user-agent":"curl/7.64.1","accept":"*/*","x-correlation-id":"51eLtfXz"}
