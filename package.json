@@ -1,6 +1,6 @@
 {
   "name": "nestjs-pino-stackdriver",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Logger for the NestJS framework with stackdriver support",
   "repository": {
     "type": "git",
