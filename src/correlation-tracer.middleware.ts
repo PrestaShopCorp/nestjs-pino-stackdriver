@@ -25,7 +25,7 @@ export type CorrelationTracerConfig = {
 /**
  * @see https://github.com/eropple/nestjs-correlation-id
  */
-export const CorrelationTracerMiddleware = (config: CorrelationTracerConfig = {}) => {
+export const CorrelationTracerMiddleware: (config?: CorrelationTracerConfig) => (req: express.Request, res: any, next: () => void) => Promise<void> = (config: CorrelationTracerConfig = {}) => {
   const headerName = config.header_name || 'x-correlation-id';
   const idGenerator = config.id_generator || shortIdGenerator;
 

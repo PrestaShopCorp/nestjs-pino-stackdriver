@@ -26,6 +26,7 @@
   },
   "devDependencies": {
     "@nestjs/common": ">=7.0.0",
+    "@types/express-serve-static-core": "^4.17.9",
     "@types/uuid": "^7.0.0",
     "rxjs": "^6.4.0",
     "typescript": "^3.2.4"
