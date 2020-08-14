@@ -23,7 +23,7 @@ export class Logger implements LoggerService {
 
   info(msg: any, context?: string, ...args: any[]) {
     if (context) {
-      this.pino.child({ context }).infoq(msg, ...args);
+      this.pino.child({ context }).info(msg, ...args);
       return;
     }
     this.pino.info(msg, ...args);

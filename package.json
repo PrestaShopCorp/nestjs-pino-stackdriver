@@ -1,7 +1,11 @@
 {
   "name": "nestjs-pino-stackdriver",
   "version": "0.3.1",
-  "description": "",
+  "description": "Logger for the NestJS framework with stackdriver support",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/PrestaShopCorp/nestjs-pino-stackdriver.git"
+  },
   "main": "dist",
   "keywords": [
     "nestjs",
