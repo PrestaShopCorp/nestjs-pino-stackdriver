@@ -1,33 +1,22 @@
-import { Global, Module, Logger } from '@nestjs/common';
-import { Logger as PinoLogger } from './logger.service';
-import { PinoLoggerConfig } from './logger.config';
+import { Module } from '@nestjs/common';
 import { LoggerOptions } from 'pino';
+import { LoggerModule as PinoLoggerModule, Params } from 'nestjs-pino';
+import { HeaderNameInterface } from './header-name.interface';
+import { Logger } from './logger.service';
+import { loggerConfig } from './logger.config';
 
-@Global()
-@Module({
-  providers: [
-    {
-      provide: Logger,
-      useValue: new PinoLogger(),
-    },
-  ],
-  exports: [Logger],
-})
+@Module({})
 export class LoggerModule {
-  static forRoot(config?: LoggerOptions) {
-    const configProvider = {
-      provide: PinoLoggerConfig,
-      useValue: new PinoLoggerConfig(config),
-    };
+  static forRoot(config?: LoggerOptions, headerNames?: HeaderNameInterface) {
+    const pinoHttp = loggerConfig(config, headerNames);
     return {
       module: LoggerModule,
-      providers: [
-        configProvider,
-        {
-          provide: Logger,
-          useValue: new PinoLogger(new PinoLoggerConfig(config)),
-        },
+      imports: [
+        PinoLoggerModule.forRoot({
+          pinoHttp,
+        } as Params),
       ],
+      providers: [Logger],
       exports: [Logger],
     };
   }
