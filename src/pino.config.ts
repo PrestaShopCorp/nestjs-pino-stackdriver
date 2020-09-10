@@ -1,4 +1,4 @@
-import { PrettyOptions } from 'pino';
+import { LoggerOptions, PrettyOptions } from 'pino';
 
 const prettyOptions = {
   translateTime: true,
@@ -18,4 +18,4 @@ export const pinoConfig = {
   useLevelLabels: true,
   // Local run, parse JSON to be human readable
   prettyPrint: process.env.NODE_ENV !== 'production' ? prettyOptions : false,
-};
+} as LoggerOptions;
