@@ -1,32 +1,16 @@
 import { v4 as uuidv4 } from 'uuid';
 import { pick } from 'lodash';
-import { PrettyOptions } from 'pino';
 import { Options } from 'pino-http';
 import { HeaderNameInterface } from './header-name.interface';
-
-const prettyOptions = {
-  translateTime: true,
-  colorize: true,
-} as PrettyOptions;
+import { pinoConfig } from './pino.config';
 
 export const pinoHttpConfig = (
   headerNameMapping: HeaderNameInterface = {correlationId: 'x-correlation-id'}
 ) => {
 
   const config = {
-    // Already in stackdriver ignore
-    timestamp: process.env.NODE_ENV !== 'production',
-    // In prod only log info
-    level: process.env.NODE_ENV !== 'production' ? 'debug' : 'info',
-    // Don't log hostname and pid
-    base: {},
-    // Tweaks to be compatible Stackdriver
-    levelKey: 'severity',
-    messageKey: 'message',
-    useLevelLabels: true,
-    // Local run, parse JSON to be human readable
-    prettyPrint: process.env.NODE_ENV !== 'production' ? prettyOptions : false,
-    // pino-http options
+    ...pinoConfig,
+
     // request id
     genReqId: function(req) {
       return (
