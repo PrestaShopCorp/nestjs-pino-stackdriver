@@ -1,19 +1,19 @@
 import { Module } from '@nestjs/common';
-import { LoggerOptions } from 'pino';
 import { LoggerModule as PinoLoggerModule, Params } from 'nestjs-pino';
 import { HeaderNameInterface } from './header-name.interface';
 import { Logger } from './logger.service';
-import { loggerConfig } from './logger.config';
+import { pinoHttpConfig } from './pino-http.config';
 
 @Module({})
 export class LoggerModule {
-  static forRoot(config?: LoggerOptions, headerNames?: HeaderNameInterface) {
-    const pinoHttp = loggerConfig(config, headerNames);
+  static forRoot(config: Params = {}, headerNames?: HeaderNameInterface) {
+    const pinoHttp = pinoHttpConfig(headerNames);
     return {
       module: LoggerModule,
       imports: [
         PinoLoggerModule.forRoot({
           pinoHttp,
+          ...config
         } as Params),
       ],
       providers: [Logger],

@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { pick } from 'lodash';
-import { LoggerOptions, PrettyOptions } from 'pino';
+import { PrettyOptions } from 'pino';
 import { Options } from 'pino-http';
 import { HeaderNameInterface } from './header-name.interface';
 
@@ -9,8 +9,7 @@ const prettyOptions = {
   colorize: true,
 } as PrettyOptions;
 
-export const loggerConfig = (
-  pinoOptions: LoggerOptions = {},
+export const pinoHttpConfig = (
   headerNameMapping: HeaderNameInterface = {correlationId: 'x-correlation-id'}
 ) => {
 
@@ -27,8 +26,6 @@ export const loggerConfig = (
     useLevelLabels: true,
     // Local run, parse JSON to be human readable
     prettyPrint: process.env.NODE_ENV !== 'production' ? prettyOptions : false,
-    ...pinoOptions,
-
     // pino-http options
     // request id
     genReqId: function(req) {
