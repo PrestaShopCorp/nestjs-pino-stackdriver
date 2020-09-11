@@ -1,19 +1,19 @@
 import { Module } from '@nestjs/common';
 import { LoggerModule as PinoLoggerModule, Params } from 'nestjs-pino';
-import { HeaderNameInterface } from './header-name.interface';
+import { CorrelationTracerHeadersInterface } from './correlation-tracer-headers.interface';
 import { Logger } from './logger.service';
 import { pinoHttpConfig } from './pino-http.config';
 
 @Module({})
 export class LoggerModule {
-  static forRoot(config: Params = {}, headerNames?: HeaderNameInterface) {
-    const pinoHttp = pinoHttpConfig(headerNames);
+  static forRoot(config: Params = {}, headerNames?: CorrelationTracerHeadersInterface) {
+    const pinoHttp = { ...pinoHttpConfig(headerNames), ...(config.pinoHttp || {}) };
     return {
       module: LoggerModule,
       imports: [
         PinoLoggerModule.forRoot({
+          ...config,
           pinoHttp,
-          ...config
         } as Params),
       ],
       providers: [Logger],

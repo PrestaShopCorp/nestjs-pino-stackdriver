@@ -1,28 +1,32 @@
 import { v4 as uuidv4 } from 'uuid';
-import { pick } from 'lodash';
+import { pickBy } from 'lodash';
 import { Options } from 'pino-http';
-import { HeaderNameInterface } from './header-name.interface';
+import { CorrelationTracerHeadersInterface } from './correlation-tracer-headers.interface';
 import { pinoConfig } from './pino.config';
 
 export const pinoHttpConfig = (
-  headerNameMapping: HeaderNameInterface = {correlationId: 'x-correlation-id'}
+  headerNameMapping: CorrelationTracerHeadersInterface = {
+    correlationId: 'x-correlation-id',
+    gcloudTrace: 'logging.googleapis.com/trace',
+  }
 ) => {
 
   const config = {
     ...pinoConfig,
 
     // request id
-    genReqId: function(req) {
-      return (
-        req.headers[headerNameMapping.correlationId] || uuidv4()
-      );
-    },
+    genReqId: req =>
+        headerNameMapping.correlationId && req.headers[headerNameMapping.correlationId]
+          ? req.headers[headerNameMapping.correlationId]
+          : uuidv4()
+    ,
   } as Options
 
   // add serializers and rename request to labels if we are in prod
   if (process.env.NODE_ENV === 'production') {
+    const headerNames = Object.values(headerNameMapping);
     config.serializers = {
-      req: req => pick(req.headers, Object.values(headerNameMapping)),
+      req: req => pickBy(req.headers,(value: any, key: string) => headerNames.includes(key) && !!value),
       res: () => {},
     };
     config.customAttributeKeys = {
