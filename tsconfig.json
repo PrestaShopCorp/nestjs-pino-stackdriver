@@ -2,15 +2,27 @@
   "compilerOptions": {
     "module": "commonjs",
     "declaration": true,
+    "noImplicitAny": true,
     "removeComments": true,
+    "noUnusedLocals": true,
+    "noLib": false,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "target": "es6",
-    "sourceMap": true,
+    "target": "es2017",
+    "sourceMap": false,
     "strict": true,
+    "strictPropertyInitialization": false,
     "outDir": "./dist",
-    "baseUrl": "./"
+    "baseUrl": "./",
+    "moduleResolution": "node"
   },
-  "include": ["src/**.ts", "src/**/*.js"],
-  "exclude": ["node_modules"]
+  "include": [
+    "nestjs-ps-tools/**.ts",
+    "nestjs-context/**.ts",
+    "nestjs-correlation-id/**.ts",
+    "nestjs-gcloud-trace/**.ts",
+    "nestjs-pino-context/**.ts",
+    "index.ts"
+  ],
+  "exclude": ["node_modules", "**/*.spec.ts", "dist", "**/node_modules", "**/dist"]
 }

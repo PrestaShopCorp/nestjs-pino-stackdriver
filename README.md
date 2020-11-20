@@ -1,103 +1,261 @@
-# NestJS Stackdriver
+# NestJs Pino Stackdriver
 
-## Using the logger
-Configured to be stackdriver compliant.
+[Pino](https://github.com/pinojs/pino) logger for Nestjs adapted to be used with Stackdriver
 
-### Using as default logger
+## About
+
+Nestjs Pino Stackdriver exports a LoggerService that includes a logger context, as the default logger implementation 
+in Nest. It can be configured to log parts from the Request and to log parts of the default [context](nestjs-context/README.md) 
+of the application. You can also set custom (static) labels.
+
+Futhermore: 
+* No need to call logger::setContext: if you have not called by yourself Logger::setContext, it automatically sets 
+the name of the provider / controller class using the logger as context
+* Use the logger as application logger
+* Get the correlation-id in your provider or controllers with [correlation-id decorators](nestjs-correlation-id/README.md)
+* Build Dtos from any request part with [BuildDto decorator](nestjs-ps-tools/README.md)
+
+## Basic Usage
+
+Include the module as an import into your main module. By default, it will be using the Stackdriver predefined 
+configuration:
+
 ```typescript
-import { Logger } from 'nestjs-pino-stackdriver';
-// In your main JS
+import { Module } from '@nestjs/common';
+import { CqrsModule } from '@nestjs/cqrs';
+import { 
+  PinoContextModule, 
+  CorrelationIdModule,
+  GcloudTraceModule,
+} from 'nestjs-pino-stackdriver';
+import { ExampleController } from './example.controller';
+import { ExampleHandler } from './command/handler/example.handler';
+
+@Module({
+  imports: [
+    CorrelationIdModule.register(),
+    GcloudTraceModule,
+    CqrsModule,
+    PinoContextModule.register(),
+  ],
+  controllers: [ExampleController],
+  providers: [ExampleHandler],
+})
+export class ExampleModule {}
+```
+
+If you want the logger to log correlation-id and gcloud trace, remember to import the corresponding modules,
+and for gcloud tracer, to start the tracer; you may want to add custom labels to your logs too:
+
+```typescript
+// In your module:
+import { Module } from '@nestjs/common';
+import { 
+  PinoContextModule, 
+  PredefinedConfig,
+  CorrelationIdModule,
+  GcloudTraceModule,
+} from 'nestjs-pino-stackdriver';
+import { ExampleController } from './example.controller';
+import { ExampleHandler } from './command/handler/example.handler';
+
+@Module({
+imports: [
+  CorrelationIdModule.register(),
+  GcloudTraceModule,
+  PinoContextModule.register({
+    base: PredefinedConfig.STACKDRIVER,
+    labels: {
+      env: [
+        { label: 'project', value: 'example' },
+        { label: 'node-env', path: 'NODE_ENV' },
+      ],
+      request: [
+        {
+          label: 'content-type',
+          pick: { headers: ['content-type'] },
+        },
+        {
+          label: 'entity-id',
+          pick: [
+            { query: ['fallback-id'], body: ['entity-id', 'id'] },
+            { query: ['override-id'] },
+          ],
+        },
+        {
+          label: 'deep-in-body',
+          pick: [{ body: ['deep.id'] }],
+          path: 'deep-in-body.id',
+        },
+      ],
+    },
+  }),
+]
+(...)
+
+// In your application:
+
+import { NestFactory } from '@nestjs/core';
+import { GcloudTraceService, createLoggerTool } from 'nestjs-pino-stackdriver';
+import { OnboardingModule } from './onboarding/my.module';
+
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
-    logger: new Logger(),
-  });
+  const app = await NestFactory.create(MyModule);
+  app.useLogger(createLoggerTool(app as any));
   await app.listen(3000);
 }
+GcloudTraceService.start();
 bootstrap();
 ```
 
-### Using inside the app
-
-#### Import it in your module 
-Configure it using pino options https://github.com/pinojs/pino/blob/master/docs/api.md#options
+Now you can inject the logger in your providers or controllers and use it:
 ```typescript
-import { LoggerModule } from 'nestjs-pino-stackdriver';
-@Module({
-  // You can leave config empty
-  imports: [LoggerModule.forRoot({ name: 'example' })],
-  controllers: [AppController],
-  providers: [AppService],
-})
-export class AppModule {
-}
-```
+import { Controller, Post, Body } from '@nestjs/common';
+import { CommandBus } from '@nestjs/cqrs';
+import { PinoContextLogger } from 'nestjs-pino-stackdriver';
+import { ExampleCommand } from './command/impl/example.command';
 
-#### Inject it from everywhere
-```typescript
-import { Controller, Get, Logger } from '@nestjs/common';
 @Controller()
-export class AppController {
+export class ExampleController {
   constructor(
-    private readonly logger: Logger,
+    private readonly commandBus: CommandBus,
+    private readonly logger: PinoContextLogger,
   ) {
-    this.logger.log('app controller booted');
+    // if you do not call setContext, "ExampleController" will be used as context
+    // logger.setContext('my custom context');
   }
 
-  @Get()
-  getHello(): string {
-    this.logger.log(headers);
-    return 'hello';
+  @Post('/example')
+  async example(
+    @Body()
+    command: ExampleCommand,
+  ) {
+    this.logger.verbose('Simple verbose message');
+    this.logger.debug({
+      msg: 'Object-like debug message',
+      sample: 'another field',
+    });
+    this.logger.warn('Warning passing custom context', 'custom-context');
+    this.logger.error(
+      'Error',
+      `An error trace`,
+    );
+    this.logger.log(
+      'An interpolation message: %o correlation-id %s',
+      undefined,
+      { try: 1 },
+      'xxx',
+    );
+
+    return this.commandBus.execute(command);
   }
 }
 ```
-
-## Correlation ID and optionnal tracer
-Add in your request a correlation id if none provided
-
+You can also use the logger as application logger:
 ```typescript
-import { CorrelationTracerMiddleware } from 'nestjs-pino-stackdriver';
+import { NestFactory } from '@nestjs/core';
+import { ValidationPipe } from '@nestjs/common';
+import { createLoggerTool } from 'nestjs-pino-stackdriver';
+import { ExampleModule } from './example.module';
+
 async function bootstrap() {
-  app.use(
-    CorrelationTracerMiddleware({
-      // To generate logger on each request and inject correlation id
-      app: app,
-      // Optionnal to start tracing
-      agent: require('@google-cloud/trace-agent').start(),
+  const app = await NestFactory.create(ExampleModule);
+  app.useLogger(createLoggerTool(app));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      validateCustomDecorators: true,
     }),
   );
-
-  await app.listen(3000);
+  await app.listen(9191);
 }
+
 bootstrap();
 ```
 
-## Use log with trace and correlation id
+### Correlation-Id
+
+This project include several decorators to get the correlation-id into your providers and controllers: 
+
+* As event metadata
 ```typescript
-import { Controller, Get, Headers, Query } from '@nestjs/common';
+import { CorrelationIdMetadata } from 'nestjs-pino-stackdriver';
 
-@Controller()
-export class AppController {
-  constructor(
-    private readonly appService: AppService,
-  ) {}
-
-  @Get()
-  getHello(@Headers() headers, @Query('logger') logger): string {
-    logger.log('request received', 'app.getHello', headers);
-    return this.appService.getHello();
-  }
+@CorrelationIdMetadata()
+export class ExampleEvent {
+  constructor(public readonly data: any, public readonly metadata: any) {}
 }
 ```
 
-Output in production
-```json
- {"severity":"info","correlation_id":"4NTtNp4X","logging.googleapis.com/trace":"281fe620078d4562b311712cf42faefd","context":"app.getHello","message":"request received {\"host\":\"localhost:3000\",\"user-agent\":\"curl/7.64.1\",\"accept\":\"*/*\",\"x-correlation-id\":\"4NTtNp4X\"}","v":1}
+* Into a class property
+```typescript
+import { CorrelationId } from 'nestjs-pino-stackdriver'; 
+
+export class InternalServerErrorException {
+  @CorrelationId()
+  private readonly correlationId;
+}
 ```
 
-Or locally
+* Into a sub-property for a class property
+```typescript
+import { AddCorrelationId } from 'nestjs-pino-stackdriver';
+
+@AddCorrelationId('property.correlation_id')
+export class ExampleClass {
+  private readonly property = {}; // property.correlation_id will be added / overwritten 
+}
 ```
-[2020-03-03 19:24:00.673 +0000] INFO : request received {"host":"localhost:3000","user-agent":"curl/7.64.1","accept":"*/*","x-correlation-id":"51eLtfXz"}
-       correlation_id: "51eLtfXz"
-       logging.googleapis.com/trace: "9b25e09ac8be4e0c93ba40304bf80fe8"
-       context: "app.getHello"
+
+### BuildDto
+
+Use the BuildDto decorator to facilitate the creation of your CQRS commands or your DTOs:
+
+```typescript
+  import { Controller, Post } from '@nestjs/common';
+  import { CommandBus } from '@nestjs/cqrs';
+  import { BuildDto } from 'nestjs-pino-stackdriver';
+  import { ExampleCommand } from './example/src/command/impl/example.command';
+
+@Controller()
+export class ExampleController {
+  constructor(
+    private readonly commandBus: CommandBus,
+  ) {}
+
+  @Post('/example')
+  async example(
+    @BuildDto({
+      query: false,
+      body: Object.getOwnPropertyNames(new ExampleCommand()),
+      headers: ['x-correlation-id'],
+    })
+    command: ExampleCommand,
+  ) {
+    return this.commandBus.execute(command);    
+  }
 ```
+
+## Further Configuration
+
+* See [nestjs-pino-stackdriver](nestjs-pino-stackdriver/README.md#further-configuration) for more information about the logger.
+* See [nestjs-correlation-id](nestjs-correlation-id/README.md) for more information about the correlation id.
+* See [nestjs-ps-tools](nestjs-ps-tools/README.md) for more information about BuildDto.
+
+## Reporting issues
+
+Create an [issue](https://github.com/PrestaShopCorp/nestjs-pino-stackdriver/issues). 
+
+## Ressources
+
+* [contributors](https://github.com/PrestaShopCorp/nestjs-pino-stackdriver/graphs/contributors)
+
+## Examples 
+
+There is a full working example in the directory "example" of each project inside this project: 
+
+* [Nest-Pino-Context](nestjs-pino-stackdriver)
+* [Context](nestjs-pino-stackdriver)    
+* [Correlation-Id](nestjs-correlation-id)    
+* [Gcloud-Trace](nestjs-gcloud-trace)    
+* [Tools](nestjs-ps-tools)
