@@ -35,7 +35,7 @@ export class PinoContextModule {
           useClass: PinoContextRequestInterceptor,
         },
       ],
-      exports: [PinoContextLogger],
+      exports: [PinoContextLogger, PinoContextConfig],
     };
   }
 }

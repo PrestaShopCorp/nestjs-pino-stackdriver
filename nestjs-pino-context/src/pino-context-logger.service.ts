@@ -20,7 +20,7 @@ export class PinoContextLogger implements LoggerService {
   private context: string;
 
   constructor(
-    private readonly config: PinoContextConfig,
+    readonly config: PinoContextConfig,
     private readonly contextStorage: Context,
     @Optional() private logger = createPinoLogger(config.loggerOptions),
   ) {}

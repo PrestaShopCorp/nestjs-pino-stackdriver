@@ -15,12 +15,15 @@ export const createLoggerTool: (
 ) => {
   let logger;
   try {
+    const config = app.get(PinoContextConfig);
     logger = new PinoContextLogger(
       app.get(PinoContextConfig),
       app.get(Context),
     );
     logger.debug(
-      `Created ${PinoContextLogger.name} with context: ${contextName}`,
+      `Created ${
+        PinoContextLogger.name
+      } with context ${contextName} and config ${JSON.stringify(config)}`,
     );
   } catch (e) {
     logger = new Logger();
