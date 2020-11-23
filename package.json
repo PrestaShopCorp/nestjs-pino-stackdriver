@@ -29,8 +29,10 @@
     "@nestjs/common": ">=7.0.0",
     "@nestjs/core": ">=7.0.0",
     "any-base": "^1.1.0",
+    "express": "^4.17.1",
     "lodash": "^4.17.20",
     "pino": "^6.7.0",
+    "serve-static": "^1.14.1",
     "uuid": "^8.3.1"
   },
   "devDependencies": {
