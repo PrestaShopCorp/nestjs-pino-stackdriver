@@ -28,7 +28,8 @@
     "@nestjs/common": ">=7.0.0",
     "@nestjs/core": ">=7.0.0",
     "lodash": "^4.17.20",
-    "pino": "^6.7.0"
+    "pino": "^6.7.0",
+    "pino-pretty": "^4.3.0"
   },
   "devDependencies": {
     "@types/jest": "^24.0.18",

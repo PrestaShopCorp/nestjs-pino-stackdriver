@@ -21,9 +21,15 @@
   },
   "scripts": {
     "test": "jest",
+    "prepack": "yarn run build",
     "build": "tsc -p tsconfig.json",
     "format": "prettier --write \"**/*.ts\""
   },
+  "files": [
+    "dist/",
+    "package.json",
+    "README.md"
+  ],
   "dependencies": {
     "@google-cloud/trace-agent": "^5.1.1",
     "@nestjs/common": ">=7.0.0",
@@ -32,6 +38,8 @@
     "express": "^4.17.1",
     "lodash": "^4.17.20",
     "pino": "^6.7.0",
+    "pino-pretty": "^4.3.0",
+    "reflect-metadata": "^0.1.13",
     "serve-static": "^1.14.1",
     "uuid": "^8.3.1"
   },

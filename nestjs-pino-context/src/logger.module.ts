@@ -13,8 +13,9 @@ export class LoggerModule extends PinoContextModule {
   static register(configModule?: ModuleRegisterType): DynamicModule {
     const superRegister = super.register(configModule);
     return {
-      ...superRegister,
+      module: LoggerModule,
       providers: [...(superRegister.providers as Provider[]), Logger],
+      exports: [...(superRegister.exports as Provider[]), Logger],
     };
   }
 }
