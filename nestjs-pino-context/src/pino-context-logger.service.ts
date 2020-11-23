@@ -195,9 +195,9 @@ export class PinoContextLogger implements LoggerService {
   }
 
   error(message: any, trace?: string, context?: string, ...args: any[]) {
-    if (message instanceof Error && message.stack && !trace) {
+    if (message instanceof Error) {
       message = message.message;
-      trace = message.stack;
+      trace = trace || message.stack;
     }
     return this.logger.error(
       this.getMergingObject({ trace, context }),
