@@ -9,7 +9,6 @@ import { ContextModule, Context } from '../../nestjs-context';
 import { correlationIdMiddleware } from './middleware';
 import { CorrelationIdConfigInterface } from './interfaces';
 import { CorrelationIdConfig } from './correlation-id.config';
-import decoratorsContextTool from './tools/decorators-context.tool';
 
 @Module({
   imports: [ContextModule.register()],
@@ -34,11 +33,8 @@ export class CorrelationIdModule implements NestModule {
   ) {}
 
   configure(consumer: MiddlewareConsumer) {
-    decoratorsContextTool.setContext(this.context);
     consumer
       .apply(correlationIdMiddleware(this.config, this.context))
       .forRoutes({ path: '*', method: RequestMethod.ALL });
   }
-  // onApplicationBootstrap() {
-  // }
 }

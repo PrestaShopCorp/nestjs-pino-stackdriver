@@ -1,6 +1,7 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import { cloneDeep, set } from 'lodash';
-import decoratorsContextTool from '../../tools/decorators-context.tool';
+
+let __addCorrelationIdContext = 'loading...';
 
 /**
  * Class Decorator that will set the current context
@@ -37,12 +38,12 @@ export const AddCorrelationId = (correlationIdPath: string) => <
         enumerable: true,
         get() {
           if (correlationIdPathParts.length === 0) {
-            return decoratorsContextTool.getCorrelationId();
+            return __addCorrelationIdContext;
           }
           return set(
             this[dataPropertyName],
             correlationIdPathParts,
-            decoratorsContextTool.getCorrelationId(),
+            __addCorrelationIdContext,
           );
         },
         set(value: any) {
@@ -56,4 +57,8 @@ export const AddCorrelationId = (correlationIdPath: string) => <
   });
 
   return newClass;
+};
+
+export const setAddCorrelationIdContext = (correlationId: string) => {
+  __addCorrelationIdContext = correlationId;
 };
