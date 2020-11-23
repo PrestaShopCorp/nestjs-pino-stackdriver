@@ -35,7 +35,8 @@ export class ExampleModule {}
 Now you can use any of the three correlation-id decorators to inject the x-corrrelation-id in your application. 
 For example:
 
-* As event metadata
+* As event metadata (note: this decorator converts your event.metadata into an accessor descriptor instead of data 
+descriptor)
 ```typescript
 import { CorrelationIdMetadata } from 'nestjs-correlation-id';
 
@@ -45,7 +46,8 @@ export class ExampleEvent {
 }
 ```
 
-* Into a class property
+* Into a class property (note: this decorator converts your event.property into an accessor descriptor instead of data 
+descriptor)
 ```typescript
 import { CorrelationId } from 'nestjs-correlation-id'; 
 

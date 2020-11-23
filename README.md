@@ -177,9 +177,10 @@ bootstrap();
 
 This project include several decorators to get the correlation-id into your providers and controllers: 
 
-* As event metadata
+* As event metadata (note: this decorator converts your event.metadata into an accessor descriptor instead of data 
+descriptor)
 ```typescript
-import { CorrelationIdMetadata } from 'nestjs-pino-stackdriver';
+import { CorrelationIdMetadata } from 'nestjs-correlation-id';
 
 @CorrelationIdMetadata()
 export class ExampleEvent {
@@ -187,7 +188,8 @@ export class ExampleEvent {
 }
 ```
 
-* Into a class property
+* Into a class property (note: this decorator converts your event.property into an accessor descriptor instead of data 
+descriptor)
 ```typescript
 import { CorrelationId } from 'nestjs-pino-stackdriver'; 
 

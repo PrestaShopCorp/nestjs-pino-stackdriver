@@ -34,12 +34,11 @@ export class CorrelationIdModule implements NestModule {
   ) {}
 
   configure(consumer: MiddlewareConsumer) {
+    decoratorsContextTool.setContext(this.context);
     consumer
       .apply(correlationIdMiddleware(this.config, this.context))
       .forRoutes({ path: '*', method: RequestMethod.ALL });
   }
-
-  onApplicationBootstrap() {
-    decoratorsContextTool.setContext(this.context);
-  }
+  // onApplicationBootstrap() {
+  // }
 }

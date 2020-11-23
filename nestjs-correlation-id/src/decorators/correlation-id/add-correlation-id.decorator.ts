@@ -28,26 +28,32 @@ export const AddCorrelationId = (correlationIdPath: string) => <
   const newClass = class extends Target {
     constructor(...args: any[]) {
       super(...args);
-      this[dataPropertyName] = cloneDeep(this[accessorPropertyName]);
-    }
-
-    get [accessorPropertyName]() {
-      if (correlationIdPathParts.length === 0) {
-        return decoratorsContextTool.getCorrelationId();
-      }
-      return set(
-        this[dataPropertyName],
-        correlationIdPathParts,
-        decoratorsContextTool.getCorrelationId(),
-      );
-    }
-
-    set [accessorPropertyName](value: any) {
-      this[dataPropertyName] = value;
+      const descriptor = cloneDeep(this[accessorPropertyName]);
+      Object.defineProperty(this, dataPropertyName, {
+        enumerable: false,
+        value: descriptor,
+      });
+      Object.defineProperty(this, accessorPropertyName, {
+        enumerable: true,
+        get() {
+          if (correlationIdPathParts.length === 0) {
+            return decoratorsContextTool.getCorrelationId();
+          }
+          return set(
+            this[dataPropertyName],
+            correlationIdPathParts,
+            decoratorsContextTool.getCorrelationId(),
+          );
+        },
+        set(value: any) {
+          this[dataPropertyName] = value;
+        },
+      });
     }
   };
   Object.defineProperty(newClass, 'name', {
     value: Target.name,
   });
+
   return newClass;
 };
