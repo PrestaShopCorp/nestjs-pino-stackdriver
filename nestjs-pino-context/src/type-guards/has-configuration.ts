@@ -2,9 +2,13 @@ import { has } from 'lodash';
 import { DeepRequired } from 'ts-essentials';
 import { ConfigType } from '../types';
 
-export const hasConfiguration = (
+type ConfigKey = keyof ConfigType | string | (keyof ConfigType | string)[];
+export const hasConfiguration: (
   config: ConfigType,
-  key: keyof ConfigType | string | (keyof ConfigType | string)[],
+  key: ConfigKey,
+) => boolean = (
+  config: ConfigType,
+  key: ConfigKey,
 ): config is DeepRequired<ConfigType> => {
   return has(config, key);
 };

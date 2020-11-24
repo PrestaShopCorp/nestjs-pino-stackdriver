@@ -4,6 +4,7 @@ import {
   MiddlewareConsumer,
   RequestMethod,
   Provider,
+  DynamicModule,
 } from '@nestjs/common';
 import { ContextModule, Context } from '../../nestjs-context';
 import { correlationIdMiddleware } from './middleware';
@@ -14,7 +15,7 @@ import { CorrelationIdConfig } from './correlation-id.config';
   imports: [ContextModule.register()],
 })
 export class CorrelationIdModule implements NestModule {
-  static register(config: CorrelationIdConfigInterface = {}) {
+  static register(config: CorrelationIdConfigInterface = {}): DynamicModule {
     const correlationIdConfig: Provider<CorrelationIdConfig> = {
       provide: CorrelationIdConfig,
       useValue: new CorrelationIdConfig(config),
