@@ -1,7 +1,7 @@
 import { Injectable, LoggerService, Scope, Optional } from '@nestjs/common';
 import * as createPinoLogger from 'pino';
 import { get, pickBy, isEmpty, fromPairs } from 'lodash';
-import { Context } from '../../nestjs-context';
+import { Context, createContext } from '../../nestjs-context';
 import { PinoContextConfig } from './pino-context.config';
 import {
   LogFieldsConfigPartContextType,
@@ -20,8 +20,8 @@ export class PinoContextLogger implements LoggerService {
   private context: string;
 
   constructor(
-    readonly config: PinoContextConfig,
-    private readonly contextStorage: Context,
+    @Optional() readonly config: PinoContextConfig = new PinoContextConfig(),
+    @Optional() private readonly contextStorage: Context = createContext(),
     @Optional() private logger = createPinoLogger(config.loggerOptions),
   ) {}
 

@@ -24,9 +24,9 @@ configuration:
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { 
-  PinoContextModule, 
-  CorrelationIdModule,
-  GcloudTraceModule,
+      PinoContextModule, 
+      CorrelationIdModule,
+      GcloudTraceModule,
 } from 'nestjs-pino-stackdriver';
 import { ExampleController } from './example.controller';
 import { ExampleHandler } from './command/handler/example.handler';
@@ -57,7 +57,7 @@ import {
   GcloudTraceModule,
 } from 'nestjs-pino-stackdriver';
 import { ExampleController } from './example.controller';
-import { ExampleHandler } from './command/handler/example.handler';
+import { ExampleHandler } from './command/handler/example.handler'; import { PinoContextLogger } from './pino-context-logger.service';
 
 @Module({
 imports: [
@@ -96,12 +96,13 @@ imports: [
 // In your application:
 
 import { NestFactory } from '@nestjs/core';
-import { GcloudTraceService, createLoggerTool } from 'nestjs-pino-stackdriver';
+import { GcloudTraceService, createLoggerTool, PinoContextLogger } from 'nestjs-pino-stackdriver';
 import { OnboardingModule } from './onboarding/my.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(MyModule);
-  app.useLogger(createLoggerTool(app as any));
+  const app = await NestFactory.create(MyModule, {logger: new PinoContextLogger()});
+  // TODO
+  // app.useLogger(createLoggerTool(app as any));
   await app.listen(3000);
 }
 GcloudTraceService.start();
@@ -151,25 +152,63 @@ export class ExampleController {
   }
 }
 ```
-You can also use the logger as application logger:
+
+### Backwards Compatibility
+
+You can continue using your LoggerModule as you were using it before 1.x: 
+
 ```typescript
+import { Module } from '@nestjs/common';
+import { CqrsModule } from '@nestjs/cqrs';
+import { 
+  LoggerModule, 
+} from 'nestjs-pino-stackdriver';
+import { ExampleController } from './example.controller';
+import { ExampleHandler } from './command/handler/example.handler';
+
+@Module({
+  imports: [
+    LoggerModule,
+    CqrsModule,
+  ],
+  controllers: [ExampleController],
+  providers: [ExampleHandler],
+})
+export class ExampleModule {}
+```
+
+You just need to stop using CorrelationTracerMiddleware, just call GcloudTraceService.start() instead:
+
+```typescript
+// 0.x
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
-import { createLoggerTool } from 'nestjs-pino-stackdriver';
-import { ExampleModule } from './example.module';
+import { MyModule } from './my/my.module';
+import { CorrelationTracerMiddleware, Logger } from 'nestjs-pino-stackdriver';
 
 async function bootstrap() {
-  const app = await NestFactory.create(ExampleModule);
-  app.useLogger(createLoggerTool(app));
-  app.useGlobalPipes(
-    new ValidationPipe({
-      transform: true,
-      validateCustomDecorators: true,
-    }),
-  );
-  await app.listen(9191);
+  const app = await NestFactory.create(MyModule, {
+    logger: new Logger(),
+  });
+  app.use(CorrelationTracerMiddleware({ app }));
+
+  await app.init();
 }
 
+bootstrap();
+
+// 1.x 
+import { NestFactory } from '@nestjs/core';
+import { MyModule } from './my/my.module';
+import { GcloudTraceService, Logger } from 'nestjs-pino-stackdriver';
+
+async function bootstrap() {
+  const app = await NestFactory.create(MyModule, {
+    logger: new Logger(),
+  });
+
+  await app.init();
+}
+GcloudTraceService.start();
 bootstrap();
 ```
 

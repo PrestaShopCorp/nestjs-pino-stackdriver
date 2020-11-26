@@ -62,7 +62,7 @@ import {
   GcloudTraceModule,
 } from 'nestjs-gcloud-trace';
 import { ExampleController } from './example.controller';
-import { ExampleHandler } from './command/handler/example.handler';
+import { ExampleHandler } from './command/handler/example.handler'; import { PinoContextLogger } from './pino-context-logger.service';
 
 @Module({
 imports: [
@@ -103,11 +103,12 @@ imports: [
 import { NestFactory } from '@nestjs/core';
 import { OnboardingModule } from './onboarding/my.module';
 import { GcloudTraceService } from 'nestjs-gcloud-trace';
-import { createLoggerTool } from 'nestjs-pino-context';
+import { createLoggerTool, PinoContextLogger } from 'nestjs-pino-context';
 
 async function bootstrap() {
-  const app = await NestFactory.create(MyModule);
-  app.useLogger(createLoggerTool(app as any));
+  const app = await NestFactory.create(MyModule, {logger: new PinoContextLogger()});
+  // TODO
+  // app.useLogger(createLoggerTool(app as any));
   await app.listen(3000);
 }
 GcloudTraceService.start();
@@ -156,27 +157,6 @@ export class ExampleController {
     return this.commandBus.execute(command);
   }
 }
-```
-You can also use the logger as application logger:
-```typescript
-import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
-import { createLoggerTool } from 'nestjs-pino-context';
-import { ExampleModule } from './example.module';
-
-async function bootstrap() {
-  const app = await NestFactory.create(ExampleModule);
-  app.useLogger(createLoggerTool(app));
-  app.useGlobalPipes(
-    new ValidationPipe({
-      transform: true,
-      validateCustomDecorators: true,
-    }),
-  );
-  await app.listen(9191);
-}
-
-bootstrap();
 ```
 
 ## Further Configuration

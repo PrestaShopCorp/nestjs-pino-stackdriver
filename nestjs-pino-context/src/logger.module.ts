@@ -1,21 +1,16 @@
-import { DynamicModule, Module, Provider } from '@nestjs/common';
-import { DiscoveryModule } from '@nestjs/core';
-import { ContextModule } from '../../nestjs-context';
+import { Module, Provider } from '@nestjs/common';
 import { PinoContextModule } from './pino-context.module';
-import { ModuleRegisterType } from './types';
 import { Logger } from './logger.service';
+import { CorrelationIdModule } from '../../nestjs-correlation-id/src';
+import { GcloudTraceModule } from '../../nestjs-gcloud-trace/src';
+import { DiscoveryModule } from '@nestjs/core';
+import { ContextModule } from '../../nestjs-context/src';
 
-/** @Deprecated **/
+const pinoContextModule = PinoContextModule.register();
+
 @Module({
-  imports: [DiscoveryModule, ContextModule.register()],
+  imports: [DiscoveryModule, ContextModule.register(), CorrelationIdModule.register(), GcloudTraceModule],
+  providers: [...(pinoContextModule.providers as Provider[]), Logger],
+  exports: [...(pinoContextModule.exports as Provider[]), Logger],
 })
-export class LoggerModule extends PinoContextModule {
-  static register(configModule?: ModuleRegisterType): DynamicModule {
-    const superRegister = super.register(configModule);
-    return {
-      module: LoggerModule,
-      providers: [...(superRegister.providers as Provider[]), Logger],
-      exports: [...(superRegister.exports as Provider[]), Logger],
-    };
-  }
-}
+export class LoggerModule {}
