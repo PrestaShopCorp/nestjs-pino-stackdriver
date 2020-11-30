@@ -344,3 +344,4 @@ There is a full working example in the directory "example" of each project insid
 ## TODO
 
 * Separate the 5 libs into 5 repositories
+* Add working example in this module (we have an example for each submodule, but not for the main one)
