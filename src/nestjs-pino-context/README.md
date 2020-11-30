@@ -164,7 +164,7 @@ export class ExampleController {
 When you register the PinoContextModule, you can pass as configuration either a string representing the name of 
 one of the bundled [configurations](src/config)  (``Fex: 'stackdriver'``) or an object containing zero or more of:
 
-  base?: PredefinedConfigOptionType: A string representing one of the bundled configurations (``Fex: 'stackdriver'`)
+*  base?: PredefinedConfigOptionType: A string representing one of the bundled configurations (``Fex: 'stackdriver'`)
 * loggerOptions?: LoggerOptions:
     Pino logger can be configured using [LoggerOptions](https://github.com/pinojs/pino/blob/master/docs/api.md#options)
 
