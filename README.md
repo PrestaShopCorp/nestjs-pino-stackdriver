@@ -120,7 +120,7 @@ export class ExampleController {
 
 ### Adding custom labels to your logs
 
-You can configure your logger to include environment, request and context labels in each log:
+You can configure your logger to include environment, request and context labels on each log:
 
 ```typescript
 import { Module } from '@nestjs/common';
