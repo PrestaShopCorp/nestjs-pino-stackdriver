@@ -16,6 +16,6 @@
     "baseUrl": "./",
     "moduleResolution": "node"
   },
-  "include": ["src/**.ts", "src/**/*.js"],
+  "include": ["src/**/*.ts", "src/**/*.js"],
   "exclude": ["node_modules", "**/*.spec.ts", "dist"]
 }

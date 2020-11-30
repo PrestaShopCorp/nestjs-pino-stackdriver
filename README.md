@@ -5,15 +5,15 @@
 ## About
 
 Nestjs Pino Stackdriver exports a LoggerService that includes a logger context, as the default logger implementation 
-in Nest. It can be configured to log parts from the Request and to log parts of the default [context-storage](nestjs-context/README.md) 
+in Nest. It can be configured to log parts from the Request and to log parts of the default [context-storage](src/nestjs-context/README.md) 
 of the application. You can also set custom (static) labels.
 
 Futhermore: 
 * No need to call logger::setContext: if you have not called by yourself Logger::setContext, it uses the name of 
 the provider / controller class as logger context
 * Use the logger as application logger
-* Get the correlation-id in your provider or controllers with [correlation-id decorators](nestjs-correlation-id/README.md)
-* Build Dtos from any request part with [BuildDto decorator](nestjs-ps-tools/README.md)
+* Get the correlation-id in your provider or controllers with [correlation-id decorators](src/nestjs-correlation-id/README.md)
+* Build Dtos from any request part with [BuildDto decorator](src/nestjs-ps-tools/README.md)
 
 ## Basic Usage
 
@@ -168,7 +168,7 @@ import { ExampleHandler } from './command/handler/example.handler';
 export class ExampleModule {}
 ```
 
-Please refer to [nestjs-pino-stackdriver](nestjs-pino-context/README.md#further-configuration) for further information
+Please refer to [nestjs-pino-stackdriver](src/nestjs-pino-context/README.md#further-configuration) for further information
 about the configuration of the logger.
 
 
@@ -319,9 +319,9 @@ export class ExampleController {
 
 ## Further Configuration
 
-* See [nestjs-pino-stackdriver](nestjs-pino-context/README.md#further-configuration) for more information about the logger.
-* See [nestjs-correlation-id](nestjs-correlation-id/README.md) for more information about the correlation id.
-* See [nestjs-ps-tools](nestjs-ps-tools/README.md) for more information about BuildDto.
+* See [nestjs-pino-stackdriver](src/nestjs-pino-context/README.md#further-configuration) for more information about the logger.
+* See [nestjs-correlation-id](src/nestjs-correlation-id/README.md) for more information about the correlation id.
+* See [nestjs-ps-tools](src/nestjs-ps-tools/README.md) for more information about BuildDto.
 
 ## Reporting issues
 
@@ -335,13 +335,12 @@ Create an [issue](https://github.com/PrestaShopCorp/nestjs-pino-stackdriver/issu
 
 There is a full working example in the directory "example" of each project inside this project: 
 
-* [Nest-Pino-Context](nestjs-pino-stackdriver)
-* [Context](nestjs-pino-stackdriver)    
-* [Correlation-Id](nestjs-correlation-id)    
-* [Gcloud-Trace](nestjs-gcloud-trace)    
-* [Tools](nestjs-ps-tools)
+* [Nest-Pino-Context](src/nestjs-pino-context)
+* [Context](src/nestjs-context)    
+* [Correlation-Id](src/nestjs-correlation-id)    
+* [Gcloud-Trace](src/nestjs-gcloud-trace)    
+* [Tools](src/nestjs-ps-tools)
 
 ## TODO
 
 * Separate the 5 libs into 5 repositories
-* Refactoring of LoggerModule (backwards compatibility) to be part of this repository, not nestjs-pino-context
