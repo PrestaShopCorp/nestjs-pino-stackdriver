@@ -169,6 +169,8 @@ import { ExampleHandler } from './command/handler/example.handler';
 @Module({
   imports: [
     LoggerModule,
+    // or LoggerModule.forRoot({}), to pass your custom configuration 
+    // but note that it will always use base = "stackdriver"
     CqrsModule,
   ],
   controllers: [ExampleController],
