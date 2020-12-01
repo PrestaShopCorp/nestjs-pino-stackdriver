@@ -201,32 +201,40 @@ In the same way, "logging.googleapis.com/trace" field is set through a "fields::
   });
 ```
 
-### Application and Initialization Logger
+### Application Logger
 
-You can use the logger to log your application logs, and/or your application + initialization logs too.
+You can use the logger to log your application logs
 
 ```typescript
 import { NestFactory } from '@nestjs/core';
 import { GcloudTraceService } from 'nestjs-gcloud-trace';
-import { createLoggerTool, PinoContextLogger, PinoContextConfig } from 'nestjs-pino-context';
-import { MyMoule } from './my.module';
+import { createLoggerTool } from 'nestjs-pino-context';
+import { MyModule } from './my.module';
+
+async function bootstrap() {
+  const app = await NestFactory.create(MyModule);
+  
+  // Pass the app to createLoggerTool and it will instantiate your logger from the DI
+  app.useLogger(createLoggerTool(app));
+  return await app.listen(3000);
+}
+GcloudTraceService.start();
+bootstrap();
+```
+You can use also use the logger to log your application + initialization logs
+
+```typescript
+import { NestFactory } from '@nestjs/core';
+import { GcloudTraceService } from 'nestjs-gcloud-trace';
+import { createLoggerTool } from 'nestjs-pino-context';
+import { MyModule } from './my.module';
 import { myLoggerConfig } from './my-logger.config';
 
 async function bootstrap() {
-  // Set the initialization Logger: in this case, the DI container has not been 
-  // built yet, so you have to manually instantiate a Logger.
-  //
-  // Note that your Application Logger will be set to this logger too, but it won't
-  // be including any context or request labels, it will only include env ones
-  const config = new PinoContextConfig(myLoggerConfig);
-  const app = await NestFactory.create(MyModule, {logger: new PinoContextLogger(config)});
-  
-  // Set the application logger: the DI system has already been loaded, 
-  // so you can use "createLoggerTool" to instantiate your logger service
-  // Applications logs will include context and request labels
-  //
-  app.useLogger(createLoggerTool(app));
-  await app.listen(3000);
+  // pass your logger config to createLoggerTool and it will
+  // create a logger with your config and using the default context
+  const app = await NestFactory.create(MyModule, {logger: createLoggerTool(myLoggerConfig)});
+  return await app.listen(3000);
 }
 GcloudTraceService.start();
 bootstrap();
@@ -372,12 +380,6 @@ To be able to do that, we only need to add the 3 fields in the context key and t
 
 ## TODO
 
-* Refactoring of Context + PinoLoggerContext, so: 
-    * default context is static (create a context in a file and export it)
-    * separate config creation into a tool
-    * you can use createLoggerTool passing the app or a config
-        * if you pass the app, you look for DI dependencies
-        * if you pass the config, you look for default context, and you create a config with the tool
 * Unit Tests
 * Only tested with Express: try it on other platforms
 * RegisterAsync to be able to use configService for logger configs

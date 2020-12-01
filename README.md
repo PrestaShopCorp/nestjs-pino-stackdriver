@@ -114,35 +114,39 @@ export class ExampleController {
 }
 ```
 
-### Application and Initialization Logger
+### Application Logger
 
-You can use the logger to log your application logs, and/or your application + initialization logs too.
+You can use the logger to log your application logs
 
 ```typescript
 import { NestFactory } from '@nestjs/core';
-import { GcloudTraceService } from 'nestjs-gcloud-trace';
-import { createLoggerTool, Logger, PinoContextConfig } from 'nestjs-pino-context';
-import { MyMoule } from './my.module';
-import { myLoggerConfig } from './my-logger.config';
+import { createStackdriverLoggerTool, GcloudTraceService } from 'nestjs-pino-stackdriver';
+import { MyModule } from './my.module';
 
 async function bootstrap() {
-  // Set the initialization Logger: in this case, the DI container has not been 
-  // built yet, so you have to manually instantiate a Logger.
-  //
-  // Note that your Application Logger will be set to this logger too, but it won't
-  // be including any context or request labels, it will only include env ones
-  const config = new PinoContextConfig(myLoggerConfig);
-  const app = await NestFactory.create(MyModule, {logger: new Logger(config)});
-
-  // or do not give any config, if you do not care about environment labels:
-  // const app = await NestFactory.create(MyModule, {logger: new Logger()});
+  const app = await NestFactory.create(MyModule);
   
-  // Set the application logger: the DI system has already been loaded, 
-  // so you can use "createLoggerTool" to instantiate your logger service
-  // Applications logs will include context and request labels
-  //
-  app.useLogger(createLoggerTool(app));
-  await app.listen(3000);
+  // Pass the app to createStackdriverLoggerTool 
+  // and it will instantiate your logger from the DI
+  app.useLogger(createStackdriverLoggerTool(app));
+  return await app.listen(3000);
+}
+GcloudTraceService.start();
+bootstrap();
+```
+You can use also use the logger to log your application + initialization logs
+
+```typescript
+import { NestFactory } from '@nestjs/core';
+import { createStackdriverLoggerTool, GcloudTraceService } from 'nestjs-pino-stackdriver';
+import { MyModule } from './my.module';
+import { myLoggerConfig } from './my-logger.config'; 
+
+async function bootstrap() {
+  // pass your logger config to createStackdriverLoggerTool 
+  // and it will create a logger with your config
+  const app = await NestFactory.create(MyModule, {logger: createStackdriverLoggerTool(myLoggerConfig)});
+  return await app.listen(3000);
 }
 GcloudTraceService.start();
 bootstrap();
