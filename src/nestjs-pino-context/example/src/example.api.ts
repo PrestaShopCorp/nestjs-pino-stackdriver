@@ -2,10 +2,18 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { ExampleModule } from './example.module';
 import { GcloudTraceService } from '../../../nestjs-gcloud-trace/src';
-import { createLoggerTool } from '../../src';
+import {
+  createLoggerTool,
+  PinoContextLogger,
+  PinoContextConfig,
+} from '../../src';
+import { loggerConfig } from './logger.config';
 
 async function bootstrap() {
-  const app = await NestFactory.create(ExampleModule);
+  const logger = new PinoContextLogger(new PinoContextConfig(loggerConfig));
+  const app = await NestFactory.create(ExampleModule, {
+    logger,
+  });
   app.useLogger(createLoggerTool(app));
   app.useGlobalPipes(
     new ValidationPipe({
