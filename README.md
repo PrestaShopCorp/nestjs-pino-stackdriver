@@ -45,12 +45,10 @@ You just need to stop using CorrelationTracerMiddleware, just call GcloudTraceSe
 // 0.x
 import { NestFactory } from '@nestjs/core';
 import { MyModule } from './my/my.module';
-import { CorrelationTracerMiddleware, Logger } from 'nestjs-pino-stackdriver';
+import { CorrelationTracerMiddleware } from 'nestjs-pino-stackdriver';
 
 async function bootstrap() {
-  const app = await NestFactory.create(MyModule, {
-    logger: new Logger(),
-  });
+  const app = await NestFactory.create(MyModule);
   app.use(CorrelationTracerMiddleware({ app }));
 
   await app.init();
@@ -61,12 +59,10 @@ bootstrap();
 // 1.x 
 import { NestFactory } from '@nestjs/core';
 import { MyModule } from './my/my.module';
-import { GcloudTraceService, Logger } from 'nestjs-pino-stackdriver';
+import { GcloudTraceService } from 'nestjs-pino-stackdriver';
 
 async function bootstrap() {
-  const app = await NestFactory.create(MyModule, {
-    logger: new Logger(),
-  });
+  const app = await NestFactory.create(MyModule);
 
   await app.init();
 }
@@ -116,6 +112,40 @@ export class ExampleController {
     return this.commandBus.execute(command);
   }
 }
+```
+
+### Application and Initialization Logger
+
+You can use the logger to log your application logs, and/or your application + initialization logs too.
+
+```typescript
+import { NestFactory } from '@nestjs/core';
+import { GcloudTraceService } from 'nestjs-gcloud-trace';
+import { createLoggerTool, Logger, PinoContextConfig } from 'nestjs-pino-context';
+import { MyMoule } from './my.module';
+import { myLoggerConfig } from './my-logger.config';
+
+async function bootstrap() {
+  // Set the initialization Logger: in this case, the DI container has not been 
+  // built yet, so you have to manually instantiate a Logger.
+  //
+  // Note that your Application Logger will be set to this logger too, but it won't
+  // be including any context or request labels, it will only include env ones
+  const config = new PinoContextConfig(myLoggerConfig);
+  const app = await NestFactory.create(MyModule, {logger: new Logger(config)});
+
+  // or do not give any config, if you do not care about environment labels:
+  // const app = await NestFactory.create(MyModule, {logger: new Logger()});
+  
+  // Set the application logger: the DI system has already been loaded, 
+  // so you can use "createLoggerTool" to instantiate your logger service
+  // Applications logs will include context and request labels
+  //
+  app.useLogger(createLoggerTool(app));
+  await app.listen(3000);
+}
+GcloudTraceService.start();
+bootstrap();
 ```
 
 ### Adding custom labels to your logs
@@ -215,7 +245,7 @@ import { GcloudTraceService, PinoContextLogger } from 'nestjs-pino-stackdriver';
 import { OnboardingModule } from './onboarding/my.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(MyModule, {logger: new PinoContextLogger()});
+  const app = await NestFactory.create(MyModule);
   await app.listen(3000);
 }
 // Do not include this if you do not want to use GcloudTrace

@@ -1,6 +1,4 @@
 import { LoggerOptions, PrettyOptions } from 'pino';
-import { LogFieldsConfigPartContextType } from '../types';
-import { LogFieldsConfigKey } from '../enums';
 
 /**
  * @todo check if it's interesting to trace correlation-id logs in the same
@@ -30,16 +28,6 @@ export const loggerOptions = {
 } as LoggerOptions;
 
 export const stackdriver = {
-  // if any of correlation-id or gcloud-trace modules are includes,
-  // their label and field will automatically be added
-  [LogFieldsConfigKey.FIELDS]: {
-    context: [
-      'logging.googleapis.com/trace',
-    ] as LogFieldsConfigPartContextType[],
-  },
-  [LogFieldsConfigKey.LABELS]: {
-    context: ['x-correlation-id'] as LogFieldsConfigPartContextType[],
-  },
   logFieldNames: {
     context: 'context',
     labels: 'labels',

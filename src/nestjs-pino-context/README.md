@@ -15,12 +15,12 @@ Futhermore:
 the logger as context
 * It includes predefined logger formats (fex: "stackdriver") 
 * It includes a tool that allows to use the logger as your application logger
-
+* By default, it logs correlation id if you are using [nestjs-correlation-id](https://github.com/PrestaShopCorp/nestjs-correlation-id)
+* By default, it logs gcloud trace if you are using [nestjs-gcloud-trace](https://github.com/PrestaShopCorp/nestjs-gcloud-trace)
 
 ## Basic Usage
 
-Include the module as an import into your main module. By default, it will be using the Stackdriver predefined 
-configuration:
+Include the module as an import into your main module:
 
 ```typescript
 import { Module } from '@nestjs/common';
@@ -28,91 +28,16 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { PinoContextModule } from 'nestjs-pino-context';
 import { ExampleController } from './example.controller';
 import { ExampleHandler } from './command/handler/example.handler';
-import {
-  CorrelationIdModule,
-} from 'nestjs-correlation-id';
-import {
-  GcloudTraceModule,
-} from 'nestjs-gcloud-trace';
 
 @Module({
   imports: [
-    CorrelationIdModule.register(),
-    GcloudTraceModule,
     CqrsModule,
-    PinoContextModule.register(),
+    PinoContextModule,
   ],
   controllers: [ExampleController],
   providers: [ExampleHandler],
 })
 export class ExampleModule {}
-```
-
-If you want the logger to log correlation-id and gcloud trace, remember to import the corresponding modules,
-and for gcloud tracer, to start the tracer; you may want to add custom labels to your logs too:
-
-```typescript
-// In your module:
-import { Module } from '@nestjs/common';
-import { PinoContextModule, PredefinedConfig } from 'nestjs-pino-context';
-import {
-  CorrelationIdModule,
-} from 'nestjs-correlation-id';
-import {
-  GcloudTraceModule,
-} from 'nestjs-gcloud-trace';
-import { ExampleController } from './example.controller';
-import { ExampleHandler } from './command/handler/example.handler'; import { PinoContextLogger } from './pino-context-logger.service';
-
-@Module({
-imports: [
-  CorrelationIdModule.register(),
-  GcloudTraceModule,
-  PinoContextModule.register({
-    base: PredefinedConfig.STACKDRIVER,
-    labels: {
-      env: [
-        { label: 'project', value: 'example' },
-        { label: 'node-env', path: 'NODE_ENV' },
-      ],
-      request: [
-        {
-          label: 'content-type',
-          pick: { headers: ['content-type'] },
-        },
-        {
-          label: 'entity-id',
-          pick: [
-            { query: ['fallback-id'], body: ['entity-id', 'id'] },
-            { query: ['override-id'] },
-          ],
-        },
-        {
-          label: 'deep-in-body',
-          pick: [{ body: ['deep.id'] }],
-          path: 'deep-in-body.id',
-        },
-      ],
-    },
-  }),
-]
-(...)
-
-// In your application:
-
-import { NestFactory } from '@nestjs/core';
-import { OnboardingModule } from './onboarding/my.module';
-import { GcloudTraceService } from 'nestjs-gcloud-trace';
-import { createLoggerTool, PinoContextLogger } from 'nestjs-pino-context';
-
-async function bootstrap() {
-  const app = await NestFactory.create(MyModule, {logger: new PinoContextLogger()});
-  // TODO
-  // app.useLogger(createLoggerTool(app as any));
-  await app.listen(3000);
-}
-GcloudTraceService.start();
-bootstrap();
 ```
 
 Now you can inject the logger in your providers or controllers and use it:
@@ -159,19 +84,169 @@ export class ExampleController {
 }
 ```
 
+### Adding custom labels to your logs
+
+You can configure your logger to include environment, request and context labels on each log:
+
+```typescript
+import { Module } from '@nestjs/common';
+import { CqrsModule } from '@nestjs/cqrs';
+import { 
+  PinoContextModule, 
+} from 'nestjs-pino-stackdriver';
+import { ExampleController } from './example.controller';
+import { ExampleHandler } from './command/handler/example.handler';
+
+@Module({
+  imports: [
+    PinoContextModule.register({
+        labels: {
+          env: [
+            { label: 'project', value: 'example' },
+            { label: 'node-env', path: 'NODE_ENV' },
+          ],
+          request: [
+            {
+              label: 'content-type',
+              pick: { headers: ['content-type'] },
+            },
+            {
+              label: 'entity-id',
+              pick: [
+                { query: ['fallback-id'], body: ['entity-id', 'id'] },
+                { query: ['override-id'] },
+              ],
+            },
+            {
+              label: 'deep-in-body',
+              pick: [{ body: ['deep.id'] }],
+              path: 'deep-in-body.id',
+            },
+          ],
+        },
+    }),
+    CqrsModule,
+  ],
+  controllers: [ExampleController],
+  providers: [ExampleHandler],
+})
+export class ExampleModule {}
+```
+
+The logger will add an "x-correlation-id" label into your logs if you are using CorrelationIdModule from 
+[nestjs-correlation-id](https://github.com/PrestaShopCorp/nestjs-correlation-id). It will also include a
+"logging.googleapis.com/trace" field if you are using GcloudTrace module from 
+[nestjs-gcloud-trace](https://github.com/PrestaShopCorp/nestjs-gcloud-trace) (remember to start the tracer in 
+you main application):
+
+```typescript
+// In your module:
+import { Module } from '@nestjs/common';
+import { PinoContextModule, PredefinedConfig } from 'nestjs-pino-context';
+import {
+  CorrelationIdModule,
+} from 'nestjs-correlation-id';
+import {
+  GcloudTraceModule,
+} from 'nestjs-gcloud-trace';
+
+@Module({
+imports: [
+  CorrelationIdModule.register(),
+  GcloudTraceModule,
+  PinoContextModule.register({
+    base: PredefinedConfig.STACKDRIVER,
+  }),
+]
+(...)
+
+// In your application:
+
+import { NestFactory } from '@nestjs/core';
+import { GcloudTraceService } from 'nestjs-gcloud-trace';
+import { createLoggerTool, PinoContextLogger } from 'nestjs-pino-context';
+import { MyMoule } from './my.module';
+
+async function bootstrap() {
+  const app = await NestFactory.create(MyModule);
+  await app.listen(3000);
+}
+GcloudTraceService.start();
+bootstrap();
+```
+
+Note that the automatic "x-correlation-id" label is set by using a "labels::context" configuration, so if
+you need to add custom context labels, and you want to keep using the x-correlation-id, you will need to
+add the x-correlation-id context label as well:
+
+```typescript
+  PinoContextModule.register({
+    base: PredefinedConfig.STACKDRIVER,
+    labels: {
+      context: ['x-correlation-id', 'my-context-label']
+    }
+  });
+```
+
+In the same way, "logging.googleapis.com/trace" field is set through a "fields::context" configuration:
+```typescript
+  PinoContextModule.register({
+    base: PredefinedConfig.STACKDRIVER,
+    labels: {
+      context: ['x-correlation-id', 'my-context-label']
+    }
+    fields: {
+      context: ['logging.googleapis.com/trace', 'my-context-field']
+    }
+  });
+```
+
+### Application and Initialization Logger
+
+You can use the logger to log your application logs, and/or your application + initialization logs too.
+
+```typescript
+import { NestFactory } from '@nestjs/core';
+import { GcloudTraceService } from 'nestjs-gcloud-trace';
+import { createLoggerTool, PinoContextLogger, PinoContextConfig } from 'nestjs-pino-context';
+import { MyMoule } from './my.module';
+import { myLoggerConfig } from './my-logger.config';
+
+async function bootstrap() {
+  // Set the initialization Logger: in this case, the DI container has not been 
+  // built yet, so you have to manually instantiate a Logger.
+  //
+  // Note that your Application Logger will be set to this logger too, but it won't
+  // be including any context or request labels, it will only include env ones
+  const config = new PinoContextConfig(myLoggerConfig);
+  const app = await NestFactory.create(MyModule, {logger: new PinoContextLogger(config)});
+  
+  // Set the application logger: the DI system has already been loaded, 
+  // so you can use "createLoggerTool" to instantiate your logger service
+  // Applications logs will include context and request labels
+  //
+  app.useLogger(createLoggerTool(app));
+  await app.listen(3000);
+}
+GcloudTraceService.start();
+bootstrap();
+```
+
 ## Further Configuration
 
 When you register the PinoContextModule, you can pass as configuration either a string representing the name of 
-one of the bundled [configurations](src/config)  (``Fex: 'stackdriver'``) or an object containing zero or more of:
+one of the [bundled configurations](src/config)  (``Fex: 'stackdriver'``) or an object containing zero or more of:
 
-*  base?: PredefinedConfigOptionType: A string representing one of the bundled configurations (``Fex: 'stackdriver'`)
+*  base?: PredefinedConfigOptionType: A string representing one of the bundled configurations (``Fex: 'stackdriver'`).
+The "base" configuration will be loaded and customised with the rest of given the configurations.
 * loggerOptions?: LoggerOptions:
     Pino logger can be configured using [LoggerOptions](https://github.com/pinojs/pino/blob/master/docs/api.md#options)
 
-*  fields?: LogFieldsConfigType;
-*  labels?: LogFieldsConfigType; fields and labels, both are object with 3 keys:
+*  fields?: LogFieldsConfigType; First level log fields. See "labels" for more information (same format).
+*  labels?: LogFieldsConfigType; Log properties inside "[labels]" field.
+   See logFieldNames configuration to configure the labels field name.
 
-    * env?: LogFieldsConfigPartEnvType[]: An array of objects representing a set of custom-static or env labels. 
+    * env?: LogFieldsConfigPartEnvType[]; An array of objects representing a set of custom-static or environment values 
         ```
         labels: [
             {
@@ -185,7 +260,7 @@ one of the bundled [configurations](src/config)  (``Fex: 'stackdriver'``) or an 
         ],
       ```
     
-    * context?: LogFieldsConfigPartContextType[]: An array of strings or [context field configurations](src/types/config/log-fields-config-part-context.type.ts).
+    * context?: LogFieldsConfigPartContextType[]; An array of [context field configurations](src/types/config/log-fields-config-part-context.type.ts).
         The logger will dynamically use them to get the labels values from the [default context](https://github.com/PrestaShopCorp/nestjs-context)
         
         ```
@@ -205,7 +280,7 @@ one of the bundled [configurations](src/config)  (``Fex: 'stackdriver'``) or an 
           filter?: (req: any) => boolean; // allows to filter the requests before picking the values from them 
         ```
         "pick" can be a simple definition, or an array of definitions to pick from the request, where each 
-        definition should be something like:
+        definition must be like:
         ```        
             export type PickFromRequestType = {
               body?: string[];
@@ -242,7 +317,7 @@ one of the bundled [configurations](src/config)  (``Fex: 'stackdriver'``) or an 
     context: string;
     labels: string;
     trace: string;
-  }: Can be used to override the logger output names of the context, labels and trace fields
+  }: Can be used to override the logger output names of the context, labels and error trace fields
 
 
 ## Reporting issues
