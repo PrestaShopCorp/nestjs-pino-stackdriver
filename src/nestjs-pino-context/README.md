@@ -372,6 +372,12 @@ To be able to do that, we only need to add the 3 fields in the context key and t
 
 ## TODO
 
+* Refactoring of Context + PinoLoggerContext, so: 
+    * default context is static (create a context in a file and export it)
+    * separate config creation into a tool
+    * you can use createLoggerTool passing the app or a config
+        * if you pass the app, you look for DI dependencies
+        * if you pass the config, you look for default context, and you create a config with the tool
 * Unit Tests
 * Only tested with Express: try it on other platforms
 * RegisterAsync to be able to use configService for logger configs
