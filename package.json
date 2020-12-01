@@ -15,9 +15,6 @@
     "logger",
     "pino"
   ],
-  "engines": {
-    "node": "^12.18.0"
-  },
   "scripts": {
     "test": "jest",
     "prepack": "yarn run build",
