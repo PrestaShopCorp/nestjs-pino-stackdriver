@@ -61,7 +61,7 @@ If you use BuildDto() without any parameters, it will call the decorator with { 
 
 ## Advanced Usage
 
-TODO jdm Array of Definitions
+TODO 
 
 
 ## Reporting issues

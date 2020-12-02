@@ -301,7 +301,7 @@ export class ExampleEvent {
 }
 ```
 
-* Into a class property (note: this decorator converts your event.property into an accessor descriptor instead of data 
+* Into a class property (note: this decorator converts your object.property into an accessor descriptor instead of data 
 descriptor)
 ```typescript
 import { CorrelationId } from 'nestjs-pino-stackdriver'; 
