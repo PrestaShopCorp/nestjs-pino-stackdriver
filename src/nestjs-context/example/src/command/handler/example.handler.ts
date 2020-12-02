@@ -24,6 +24,11 @@ export class ExampleHandler implements ICommandHandler<ExampleCommand> {
     );
     this.logger.debug(
       `Command handler printing ${this.defaultContext.get(
+        'example-top-level-di',
+      )}`,
+    );
+    this.logger.debug(
+      `Command handler printing ${this.defaultContext.get(
         'example-controller',
       )}`,
     );

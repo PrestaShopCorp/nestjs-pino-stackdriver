@@ -1,34 +1,43 @@
-import { INestApplication, Logger } from '@nestjs/common';
+import { INestApplication } from '@nestjs/common';
 import * as path from 'path';
 import { PinoContextLogger } from '../pino-context-logger.service';
 import { PinoContextConfig } from '../pino-context.config';
 import { Context } from '../../../nestjs-context';
+import { ModuleRegisterType } from '../types';
+import { isNestApplication } from '../type-guards/is-nest-application';
+import { defaultContext } from '../../../nestjs-context/src/default.context';
 
 export const createLoggerTool: (
-  app: INestApplication,
+  configOrApp: INestApplication | ModuleRegisterType,
   contextName?: string,
-) => PinoContextLogger | Logger = (
-  app: INestApplication,
+) => PinoContextLogger = (
+  configOrApp: INestApplication | ModuleRegisterType,
   contextName = process.argv[1]
     ? path.basename(process.argv[1], path.extname(process.argv[1]))
     : path.basename(__filename),
 ) => {
   let logger;
   try {
-    const config = app.get(PinoContextConfig);
-    logger = new PinoContextLogger(
-      app.get(PinoContextConfig),
-      app.get(Context),
-    );
+    let config, context;
+    if (isNestApplication(configOrApp)) {
+      config = configOrApp.get(PinoContextConfig);
+      context = configOrApp.get(Context);
+    } else {
+      config = new PinoContextConfig(configOrApp);
+      context = defaultContext;
+    }
+    logger = new PinoContextLogger(config, context);
     logger.debug(
       `Created ${
         PinoContextLogger.name
       } with context ${contextName} and config ${JSON.stringify(config)}`,
     );
   } catch (e) {
-    logger = new Logger();
+    logger = new PinoContextLogger();
     logger.warn(
-      `Could not create ${PinoContextLogger.name}. Reason: ${e.toString()}`,
+      `Could not create ${
+        PinoContextLogger.name
+      } into the given context. Reason: ${e.toString()}`,
     );
   }
   logger.setContext(contextName);

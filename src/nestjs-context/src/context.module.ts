@@ -5,8 +5,9 @@ import {
   Global,
   ValueProvider,
 } from '@nestjs/common';
-import { Context, createContext } from './context';
+import { Context } from './context';
 import { createProvidersForDecorated } from './decorators/inject-context.decorator';
+import { defaultContext } from './default.context';
 
 @Global()
 @Module({})
@@ -21,7 +22,7 @@ export class ContextModule {
 
     const defaultContextProvider: ValueProvider<Context> = {
       provide: Context,
-      useValue: createContext(),
+      useValue: defaultContext,
     };
     providers.push(defaultContextProvider);
     exports.push(defaultContextProvider);
