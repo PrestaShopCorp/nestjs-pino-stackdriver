@@ -4,14 +4,14 @@ import { PinoContextLogger } from '../pino-context-logger.service';
 import { PinoContextConfig } from '../pino-context.config';
 import { Context } from '../../../nestjs-context';
 import { ModuleRegisterType } from '../types';
-import { isNestApplication } from '../type-guards/is-nest-application';
-import { defaultContext } from '../../../nestjs-context/src/default.context';
+import { isNestApplication } from '../type-guards';
+import { defaultContext } from '../../../nestjs-context';
 
 export const createLoggerTool: (
   configOrApp: INestApplication | ModuleRegisterType,
   contextName?: string,
 ) => PinoContextLogger = (
-  configOrApp: INestApplication | ModuleRegisterType,
+  configOrApp: INestApplication | ModuleRegisterType = {} as ModuleRegisterType,
   contextName = process.argv[1]
     ? path.basename(process.argv[1], path.extname(process.argv[1]))
     : path.basename(__filename),
