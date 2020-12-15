@@ -20,9 +20,13 @@ export const loggerOptions = {
   // Don't log hostname and pid
   base: {},
   // Tweaks to be compatible Stackdriver
-  levelKey: 'severity',
   messageKey: 'message',
-  useLevelLabels: true,
+  formatters: {
+    level: () => {
+      return { level: 'severity' };
+    },
+  },
+
   // Local run, parse JSON to be human readable
   prettyPrint: process.env.NODE_ENV !== 'production' ? prettyOptions : false,
 } as LoggerOptions;
