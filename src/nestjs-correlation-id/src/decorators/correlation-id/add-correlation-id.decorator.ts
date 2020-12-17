@@ -1,7 +1,7 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import { cloneDeep, set } from 'lodash';
 
-let __addCorrelationIdContext = 'loading...';
+let __addCorrelationIdContext = '';
 
 /**
  * Class Decorator that will set the current context

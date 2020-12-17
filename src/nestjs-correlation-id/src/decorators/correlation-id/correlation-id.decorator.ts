@@ -1,4 +1,4 @@
-let __correlationIdContext = 'loading...';
+let __correlationIdContext = '';
 
 export const CorrelationId = () => (target: any, propertyKey: string) => {
   Object.defineProperty(target, propertyKey, {
