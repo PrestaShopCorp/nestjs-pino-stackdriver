@@ -1,8 +1,8 @@
 import { Module, Logger } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
-import { CorrelationIdModule } from '../../src';
+import { CorrelationIdModule } from '../../../src';
 import { ExampleController } from './example.controller';
-import { ExampleHandler } from './command/handler/example.handler';
+import { ExampleHandler } from './command/handlers/example.handler';
 
 @Module({
   imports: [CqrsModule, CorrelationIdModule.register()],

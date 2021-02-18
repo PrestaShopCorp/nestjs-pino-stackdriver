@@ -1,4 +1,4 @@
-import { CorrelationIdMetadata } from '../../../src';
+import { CorrelationIdMetadata } from '../../../../src';
 
 @CorrelationIdMetadata()
 export class ExampleEvent {

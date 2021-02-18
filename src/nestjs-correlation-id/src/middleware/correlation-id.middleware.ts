@@ -2,8 +2,6 @@ import { kebabCase } from 'lodash';
 import { Context } from '../../../nestjs-context';
 import { CONTEXT_CORRELATION_ID } from '../constants';
 import { CorrelationIdConfig } from '../correlation-id.config';
-import { setCorrelationIdContext } from '../decorators/correlation-id/correlation-id.decorator';
-import { setAddCorrelationIdContext } from '../decorators/correlation-id/add-correlation-id.decorator';
 
 type RequestType = {
   header: (key: string) => any;
@@ -38,8 +36,6 @@ export const correlationIdMiddleware: (
     // save correlation id in context
     if (context) {
       context.set(CONTEXT_CORRELATION_ID, correlationId);
-      setCorrelationIdContext(correlationId);
-      setAddCorrelationIdContext(correlationId);
     }
 
     next();

@@ -4,7 +4,7 @@ import {
   AddCorrelationId,
   CorrelationId,
   HEADER_CORRELATION_ID,
-} from '../../../../src';
+} from '../../../../../src';
 import { ExampleCommand } from '../impl/example.command';
 import { ExampleEvent } from '../../events/example.event';
 

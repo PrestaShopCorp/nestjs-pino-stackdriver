@@ -4,12 +4,9 @@
   "description": "Example for nestjs-correlation-id",
   "author": "Jacob Dharandas Méndez <j.dharandas@gmail.com>",
   "license": "MIT",
-  "engines": {
-    "node": "^12.18.0"
-  },
   "scripts": {
-    "format": "prettier --write \"src/**/*.ts\"",
-    "start": "ts-node-dev ./src/example.api.ts"
+    "format": "prettier --write \\\"src/**/*.ts\\\"",
+    "start": "ts-node-dev src/example.api.ts"
   },
   "dependencies": {
     "@nestjs/common": ">=7.0.0",
