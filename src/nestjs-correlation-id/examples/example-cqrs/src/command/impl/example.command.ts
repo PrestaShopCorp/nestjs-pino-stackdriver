@@ -1,5 +1,5 @@
 import { IsString, IsNotEmpty } from 'class-validator';
-import { HEADER_CORRELATION_ID } from '../../../../src';
+import { HEADER_CORRELATION_ID } from '../../../../../src';
 
 export class ExampleCommand {
   @IsNotEmpty()

@@ -1,7 +1,7 @@
 import { Controller, Headers, Logger, Post } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
-import { BuildDto } from '../../../nestjs-ps-tools';
-import { HEADER_CORRELATION_ID } from '../../src';
+import { BuildDto } from '../../../../nestjs-ps-tools';
+import { HEADER_CORRELATION_ID } from '../../../src';
 import { ExampleCommand } from './command/impl/example.command';
 
 @Controller()

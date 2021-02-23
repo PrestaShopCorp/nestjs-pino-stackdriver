@@ -21,8 +21,8 @@ Include the module as an import into your main module:
 import { Module, Logger } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { CorrelationIdModule } from 'nestjs-correlation-id';
-import { ExampleController } from './example/src/example.controller';
-import { ExampleHandler } from './example/src/command/handler/example.handler';
+import { ExampleController } from './examples/example-cqrs/src/example.controller';
+import { ExampleHandler } from './examples/example-cqrs/src/command/handlers/example.handler';
 
 @Module({
   imports: [CqrsModule, CorrelationIdModule.register()],
@@ -69,6 +69,46 @@ export class ExampleClass {
 
 Note that "x-correlation-id" will always be auto-generated if it does not exist as HEADER in the request.
 
+## Set a custom correlation-id
+
+You can use @SetCorrelationIdFrom decorator to set the correlation-id value from a method argument. 
+This is very useful if you are not in a webapp context or you can not import the default middleware for any reason.
+
+For example, if your app is a simple queue processor, you could add the job-id as correlation-id using something like:
+
+```typescript
+@Processor('my-queue')
+export class ExampleProcessor {
+  @CorrelationId()
+  private correlationId: string;
+
+  private readonly logger = new Logger(ExampleProcessor.name);
+
+  @Process()
+  @SetCorrelationIdFrom('id')
+  handle(job: Job) {
+    this.logger.log(`Correlation Id ${this.correlationId} has taken the value of the jobId (${job.id})`);
+  }
+}
+```
+
+Of course, you could also use the default context from ContextModule to set the correlation-id value:
+
+```typescript
+import { Context } from 'nestjs-context';
+import { CONTEXT_CORRELATION_ID } from 'nestjs-correlation-id';
+
+@Injectable()
+export class ExampleClass {
+  @CorrelationId()
+  private correlationId: string;
+  
+  constructor(private readonly context: Context) {
+    this.context.set(CONTEXT_CORRELATION_ID, 'my-custom-value-for-correlation-id');
+  }
+}
+```
+
 ## Advanced Usage
 
 You may want to use the correlation-id middleware to generate a random correlation-id header (by default) without
@@ -85,7 +125,6 @@ For example, you can add it globally:
     app.use(correlationIdMiddleware(CorrelationIdConfig));
     await app.listen(3000);
 ```
-
 
 ## Further Configuration
 
@@ -117,7 +156,7 @@ Create an [issue](https://github.com/PrestaShopCorp/nestjs-correlation-id/issues
 
 ## Examples 
 
-There is a full working example in the directory "example" of this project ([here!](example/)).
+There is a full working example in the directory "example" of this project ([here!](examples/)).
 
 Use "yarn start" to execute the example script (from the "example" directory):
 ```
