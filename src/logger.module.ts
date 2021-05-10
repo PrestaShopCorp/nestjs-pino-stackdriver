@@ -1,37 +1,26 @@
 import { DynamicModule, Module, Provider } from '@nestjs/common';
 import { DiscoveryModule } from '@nestjs/core';
-import { ContextModule } from './nestjs-context';
-import { CorrelationIdModule } from './nestjs-correlation-id';
-import { GcloudTraceModule } from './nestjs-gcloud-trace';
-import {
-  ConfigType,
-  ModuleRegisterType,
-  PinoContextModule,
-} from './nestjs-pino-context';
-import { Logger } from './logger.service';
-import { stackdriverConfigTool } from './tools';
+import { ConfigType, ModuleRegisterType } from './types';
+import { Logger } from './services';
+import { PinoContextModule } from './pino-context.module';
+import { createStackdriverLoggerConfig } from './tools';
 
 const createModuleDef = (config?: ModuleRegisterType) => {
   const pinoContextModule = PinoContextModule.register(config);
   return {
-    imports: [
-      DiscoveryModule,
-      ContextModule.register(),
-      CorrelationIdModule.register(),
-      GcloudTraceModule,
-    ],
+    imports: [DiscoveryModule],
     providers: [...(pinoContextModule.providers as Provider[]), Logger],
     exports: [...(pinoContextModule.exports as Provider[]), Logger],
   };
 };
 
-@Module(createModuleDef(stackdriverConfigTool({})))
+@Module(createModuleDef(createStackdriverLoggerConfig({})))
 export class LoggerModule {
   static forRoot(config: ConfigType = {}): DynamicModule {
     return LoggerModule.register(config);
   }
   static register(config: ConfigType = {}): DynamicModule {
-    const moduleConfig = stackdriverConfigTool(config);
+    const moduleConfig = createStackdriverLoggerConfig(config);
     return {
       module: LoggerModule,
       ...createModuleDef(moduleConfig),
