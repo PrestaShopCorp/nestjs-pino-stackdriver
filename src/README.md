@@ -207,6 +207,7 @@ curl --location --request POST 'http://127.0.0.1:9191/example/param-id?fallback-
 
 ## WIP
 
+* When we have created Nestjs-Gcloud-Trace module, for the default context config to use it
 * Test if it's working with Stackdriver. If tracing is not working, we need to change 'logging.googleapis.com/trace' 
 field to be 3 fields instead: trace, spanId and traceSampled 
 (as defined [here](https://cloud.google.com/logging/docs/reference/v2/rest/v2/LogEntry)).
