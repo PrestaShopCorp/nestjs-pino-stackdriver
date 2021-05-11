@@ -18,7 +18,7 @@
     "class-transformer": "^0.3.1",
     "class-validator": "^0.12.2",
     "express": "^4.17.1",
-    "lodash": "^4.17.20",
+    "lodash": "^4.17.21",
     "pino": "^6.7.0",
     "serve-static": "^1.14.1"
   },
