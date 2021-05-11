@@ -25,7 +25,7 @@
   },
   "dependencies": {
     "@nestjs/common": ">=7.0.0",
-    "lodash": "^4.17.20",
+    "lodash": "^4.17.21",
     "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
