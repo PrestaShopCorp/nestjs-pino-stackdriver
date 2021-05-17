@@ -6,7 +6,7 @@ import {
   PredefinedConfigDescriptorType,
 } from './types';
 import { isPredefinedLogger, isCustomLogger } from './type-guards';
-import { ContextName } from 'nestjs-context';
+import { ContextName, addContextDefaults } from 'nestjs-context';
 
 const defaultLogFieldNames = {
   context: 'context',
@@ -15,7 +15,7 @@ const defaultLogFieldNames = {
 };
 
 export class PinoContextConfig implements ConfigType {
-  context = { type: ContextName.HTTP, build: {} };
+  context = addContextDefaults({ type: ContextName.HTTP });
   loggerOptions = {};
   logFieldNames = defaultLogFieldNames;
 

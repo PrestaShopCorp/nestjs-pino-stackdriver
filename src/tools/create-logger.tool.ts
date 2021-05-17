@@ -25,7 +25,7 @@ export const createLoggerTool: (
       config = new PinoContextConfig(configOrApp);
       context = new Context(config.context);
     }
-    logger = new PinoContextLogger(context, config);
+    logger = new PinoContextLogger(config, context);
     logger.debug(
       `Created ${
         PinoContextLogger.name
