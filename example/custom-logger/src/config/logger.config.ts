@@ -4,5 +4,5 @@ import { LoggerConfigType, PredefinedConfig } from '../../../../src';
 export const loggerConfig = {
   base: PredefinedConfig.STACKDRIVER,
   context: contextConfig,
-  blocklist: ['path'],
+  contextBlocklist: ['bin'],
 } as LoggerConfigType;
