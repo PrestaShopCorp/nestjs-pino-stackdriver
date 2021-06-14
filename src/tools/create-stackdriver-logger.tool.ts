@@ -1,7 +1,7 @@
 import { isEmpty } from 'lodash';
 import { INestApplication } from '@nestjs/common';
 import {
-  ConfigType,
+  LoggerConfigType,
   createLoggerTool,
   isNestApplication,
   ModuleRegisterType,
@@ -9,16 +9,17 @@ import {
 } from '..';
 
 export const createStackdriverLoggerConfig: (
-  config: ConfigType,
-) => ModuleRegisterType = (config: ConfigType) =>
+  config: LoggerConfigType,
+) => ModuleRegisterType = (config: LoggerConfigType) =>
   isEmpty(config)
     ? PredefinedConfig.STACKDRIVER
-    : {
+    : ({
         ...config,
         base: PredefinedConfig.STACKDRIVER,
-      };
+      } as LoggerConfigType);
+
 export const createStackdriverLoggerTool = (
-  configOrApp: INestApplication | ConfigType = {} as ConfigType,
+  configOrApp: INestApplication | LoggerConfigType = {} as LoggerConfigType,
   contextName?: string,
 ) => {
   if (!isNestApplication(configOrApp)) {

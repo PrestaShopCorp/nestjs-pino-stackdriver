@@ -1,5 +1,6 @@
 import { LoggerOptions, PrettyOptions } from 'pino';
-import { ConfigType } from '../types';
+import { LoggerConfigType } from '../../types';
+import { loggerContextConfig } from '../logger-context.config';
 
 /**
  * @todo check if it's interesting to trace correlation-id logs in the same
@@ -11,7 +12,7 @@ const prettyOptions = {
   colorize: true,
 } as PrettyOptions;
 
-export const loggerOptions = {
+const loggerOptions = {
   // Already in stackdriver ignore
   timestamp: process.env.NODE_ENV !== 'production',
   // In prod only log info
@@ -37,4 +38,5 @@ export const stackdriver = {
     trace: 'trace',
   },
   loggerOptions,
-} as ConfigType;
+  context: loggerContextConfig,
+} as LoggerConfigType;

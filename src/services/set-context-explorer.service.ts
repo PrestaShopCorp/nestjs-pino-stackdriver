@@ -1,7 +1,7 @@
 import { OnModuleInit, Injectable } from '@nestjs/common';
 import { DiscoveryService } from '@nestjs/core';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
-import { PinoContextLogger } from './pino-context-logger.service';
+import { Logger } from './logger.service';
 
 @Injectable()
 export class SetContextExplorer implements OnModuleInit {
@@ -17,11 +17,7 @@ export class SetContextExplorer implements OnModuleInit {
         return;
       }
       Object.values(wrapper.instance).forEach(service => {
-        if (
-          service &&
-          service instanceof PinoContextLogger &&
-          !service.hasContext()
-        ) {
+        if (service && service instanceof Logger && !service.hasContext()) {
           service.setContext(wrapper.name);
         }
       });

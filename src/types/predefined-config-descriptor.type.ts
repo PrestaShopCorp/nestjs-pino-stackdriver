@@ -1,4 +1,4 @@
-import * as configs from '../config';
+import * as configs from '../config/predefined-logger';
 
 type PredefinedConfigs = typeof configs;
 export type PredefinedConfigDescriptorType = Extract<

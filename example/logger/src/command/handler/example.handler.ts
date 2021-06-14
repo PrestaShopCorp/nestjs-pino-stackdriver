@@ -1,12 +1,10 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { ExampleCommand } from '../impl/example.command';
-import { PinoContextLogger } from '../../../../src';
+import { Logger } from '../../../../../src';
 
 @CommandHandler(ExampleCommand)
 export class ExampleHandler implements ICommandHandler<ExampleCommand> {
-  private correlationId: string;
-
-  constructor(private readonly logger: PinoContextLogger) {}
+  constructor(private readonly logger: Logger) {}
 
   async execute(command: ExampleCommand) {
     this.logger.error(
@@ -15,10 +13,10 @@ export class ExampleHandler implements ICommandHandler<ExampleCommand> {
     );
 
     this.logger.log(
-      'An interpolation message: %o correlation-id %s',
+      'An interpolation message: %o hello %s',
       undefined,
-      { try: 1 },
-      this.correlationId,
+      { try: 'to say' },
+      'world',
     );
 
     return command;

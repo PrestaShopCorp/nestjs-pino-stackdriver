@@ -1,4 +1,4 @@
-import { ConfigType } from './index';
+import { LoggerConfigType } from './index';
 import { PredefinedConfig } from '../enums';
 
-export type ModuleRegisterType = PredefinedConfig | ConfigType;
+export type ModuleRegisterType = PredefinedConfig | LoggerConfigType;

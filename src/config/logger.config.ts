@@ -1,12 +1,12 @@
 import { merge } from 'lodash';
-import * as configs from './config';
+import * as configs from './predefined-logger';
 import {
-  ConfigType,
+  LoggerConfigType,
   ModuleRegisterType,
   PredefinedConfigDescriptorType,
-} from './types';
-import { isPredefinedLogger, isCustomLogger } from './type-guards';
-import { ContextName, addContextDefaults } from 'nestjs-context';
+} from '../types';
+import { isPredefinedLogger, isCustomLogger } from '../type-guards';
+import { loggerContextConfig } from './logger-context.config';
 
 const defaultLogFieldNames = {
   context: 'context',
@@ -14,19 +14,20 @@ const defaultLogFieldNames = {
   trace: 'trace',
 };
 
-export class PinoContextConfig implements ConfigType {
-  context = addContextDefaults({ type: ContextName.HTTP });
+export class LoggerConfig implements LoggerConfigType {
+  context = loggerContextConfig;
+  contextBlocklist: string[] = [];
   loggerOptions = {};
   logFieldNames = defaultLogFieldNames;
 
   constructor(config: ModuleRegisterType = {}) {
-    let configToMerge: ConfigType = {};
+    let configToMerge: LoggerConfigType = {};
     if (isPredefinedLogger(config)) {
       configToMerge = configs[config];
     } else if (isCustomLogger(config)) {
       const defaultValues = config.base
         ? configs[config.base as PredefinedConfigDescriptorType]
-        : ({} as ConfigType);
+        : ({} as LoggerConfigType);
       configToMerge = merge(defaultValues, config);
     }
     merge(this, configToMerge);

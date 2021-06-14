@@ -1,29 +1,27 @@
-import { DynamicModule, Module, Provider } from '@nestjs/common';
-import { DiscoveryModule } from '@nestjs/core';
-import { ConfigType, ModuleRegisterType } from './types';
-import { Logger } from './services';
-import { PinoContextModule } from './pino-context.module';
+import { pick } from 'lodash';
+import { DynamicModule, Module } from '@nestjs/common';
+import { LoggerConfigType, ModuleRegisterType } from './types';
+import { PinoContextLoggerModule } from './pino-context-logger.module';
 import { createStackdriverLoggerConfig } from './tools';
 
 const createModuleDef = (config?: ModuleRegisterType) => {
-  const pinoContextModule = PinoContextModule.register(config);
-  return {
-    imports: [DiscoveryModule],
-    providers: [...(pinoContextModule.providers as Provider[]), Logger],
-    exports: [...(pinoContextModule.exports as Provider[]), Logger],
-  };
+  return pick(PinoContextLoggerModule.register(config), [
+    'imports',
+    'providers',
+    'exports',
+  ]);
 };
 
 @Module(createModuleDef(createStackdriverLoggerConfig({})))
 export class LoggerModule {
-  static forRoot(config: ConfigType = {}): DynamicModule {
+  static forRoot(config: LoggerConfigType = {}): DynamicModule {
     return LoggerModule.register(config);
   }
-  static register(config: ConfigType = {}): DynamicModule {
+  static register(config: LoggerConfigType = {}): DynamicModule {
     const moduleConfig = createStackdriverLoggerConfig(config);
     return {
-      module: LoggerModule,
       ...createModuleDef(moduleConfig),
+      module: LoggerModule,
     };
   }
 }

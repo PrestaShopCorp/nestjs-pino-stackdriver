@@ -1,5 +1,5 @@
 import { ModuleRegisterType, PredefinedConfigDescriptorType } from '../types';
-import * as configs from '../config';
+import * as configs from '../config/predefined-logger';
 
 export const isPredefinedLogger = (
   logger: ModuleRegisterType,

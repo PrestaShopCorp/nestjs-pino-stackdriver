@@ -1,7 +1,7 @@
-import { ConfigType, ModuleRegisterType } from '../types';
+import { LoggerConfigType, ModuleRegisterType } from '../types';
 
 export const isCustomLogger = (
   logger: ModuleRegisterType,
-): logger is ConfigType => {
-  return typeof (logger as ConfigType) !== 'string';
+): logger is LoggerConfigType => {
+  return typeof (logger as LoggerConfigType) !== 'string';
 };
