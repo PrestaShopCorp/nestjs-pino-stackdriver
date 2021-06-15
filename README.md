@@ -280,7 +280,7 @@ bootstrap();
 Create an [issue](https://github.com/PrestaShopCorp/nestjs-pino-context/issues). 
 
 
-## Ressources
+## Resources
 
 * [contributors](https://github.com/PrestaShopCorp/nestjs-pino-context/graphs/contributors)
 * [nest-context](https://github.com/PrestaShopCorp/nestjs-context)
