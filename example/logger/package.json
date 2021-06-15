@@ -8,8 +8,8 @@
     "node": "^12.18.0"
   },
   "scripts": {
-    "format": "prettier --write \\\"src/**/*.ts\\\"",
-    "start": "ts-node-dev src/example.api.ts"
+    "format": "prettier --write \"src/**/*.ts\"",
+    "start": "ts-node-dev ./src/example.api.ts"
   },
   "dependencies": {
     "@nestjs/common": ">=7.0.0",
