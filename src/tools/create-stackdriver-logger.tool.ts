@@ -1,17 +1,32 @@
+import { isEmpty } from 'lodash';
+import { INestApplication } from '@nestjs/common';
 import {
-  ConfigType,
+  LoggerConfigType,
   createLoggerTool,
   isNestApplication,
-} from '../nestjs-pino-context';
-import { stackdriverConfigTool } from './stackdriver-config.tool';
-import { INestApplication } from '@nestjs/common';
+  ModuleRegisterType,
+  PredefinedConfig,
+} from '..';
+
+export const createStackdriverLoggerConfig: (
+  config: LoggerConfigType,
+) => ModuleRegisterType = (config: LoggerConfigType) =>
+  isEmpty(config)
+    ? PredefinedConfig.STACKDRIVER
+    : ({
+        ...config,
+        base: PredefinedConfig.STACKDRIVER,
+      } as LoggerConfigType);
 
 export const createStackdriverLoggerTool = (
-  configOrApp: INestApplication | ConfigType = {} as ConfigType,
+  configOrApp: INestApplication | LoggerConfigType = {} as LoggerConfigType,
   contextName?: string,
 ) => {
   if (!isNestApplication(configOrApp)) {
-    return createLoggerTool(stackdriverConfigTool(configOrApp), contextName);
+    return createLoggerTool(
+      createStackdriverLoggerConfig(configOrApp),
+      contextName,
+    );
   }
   return createLoggerTool(configOrApp, contextName);
 };
