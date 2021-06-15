@@ -2642,10 +2642,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^12.7.5":
-  version: 12.19.4
-  resolution: "@types/node@npm:12.19.4"
-  checksum: 9942e57f34ed8fa7de5a1b53268db4ecc12a646f6416392e1eeb03531d390e10f88ec2c237acaf90b623486154ebffdf1cec06a65de67eea3d411f85dddae1c7
+"@types/node@npm:^14.14.6":
+  version: 14.17.3
+  resolution: "@types/node@npm:14.17.3"
+  checksum: 0d3e3c3dbb8250166d7c8c7c6221bde20a366d2c34b27c0072c3962a32c8a74c4ae4a168bfe53d6193e7b0bba8d8bc87608a6fd2af7918cd444a9aa699b4ce18
   languageName: node
   linkType: hard
 
@@ -8416,7 +8416,7 @@ fsevents@~2.3.1:
     "@types/express": ^4.17.9
     "@types/jest": ^24.0.18
     "@types/lodash": ^4.14.165
-    "@types/node": ^12.7.5
+    "@types/node": ^14.14.6
     "@types/pino": ^6.3.3
     "@types/supertest": ^2.0.8
     "@types/uuid": ^8.3.0
@@ -8440,7 +8440,7 @@ fsevents@~2.3.1:
     ts-jest: ^26.4.4
     ts-loader: ^6.1.1
     tsconfig-paths: ^3.9.0
-    typescript: ^3.7.5
+    typescript: ~4.2.3
     uuid: ^8.3.1
   peerDependencies:
     "@nestjs/common": ">=7.6.7"
@@ -10913,23 +10913,23 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
-typescript@^3.7.5:
-  version: 3.9.7
-  resolution: "typescript@npm:3.9.7"
+"typescript@patch:typescript@~4.2.3#builtin<compat/typescript>":
+  version: 4.2.4
+  resolution: "typescript@patch:typescript@npm%3A4.2.4#builtin<compat/typescript>::version=4.2.4&hash=a45b0e"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10848a9c35fd8c70a8792b8bd9485317534bcd58768793d3b7d9c7486e9fd30cf345f83fa2a324e0bf6088bc8a4d8d061d58fda38b18c2ff187cf01fbbff6267
+  checksum: 3be44317593182e8ce494c114e7ad9b0bb2553a22f3085cc6da4f0a36912c20850daa9be4c898af2ab6fc8b12f430c1c9e46ac715721867cd38643f2350d3ef9
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@^3.7.5#builtin<compat/typescript>":
-  version: 3.9.7
-  resolution: "typescript@patch:typescript@npm%3A3.9.7#builtin<compat/typescript>::version=3.9.7&hash=a45b0e"
+typescript@~4.2.3:
+  version: 4.2.4
+  resolution: "typescript@npm:4.2.4"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: ee9b64dafd9997a7f659c402dc4500792e05724a39a9071a0b79fd513466d6f4497e7d4963e092804a387b77e9cb9d4bfe365433fcbf2ca9eea44476ba3df14d
+  checksum: edaede2fa77f56b7fba80ee624a2368ab1216e75b0434d968ccb47ab0a5e2f6d94f848b3b111c1237dd71e988cd376af26370dcdad3b94355c76e759f0dd0a1e
   languageName: node
   linkType: hard
 
