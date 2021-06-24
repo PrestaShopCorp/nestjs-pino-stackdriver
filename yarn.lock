@@ -1905,31 +1905,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/common@npm:^7.5.1":
-  version: 7.6.17
-  resolution: "@nestjs/common@npm:7.6.17"
-  dependencies:
-    axios: 0.21.1
-    iterare: 1.2.1
-    tslib: 2.2.0
-    uuid: 8.3.2
-  peerDependencies:
-    cache-manager: "*"
-    class-transformer: "*"
-    class-validator: "*"
-    reflect-metadata: ^0.1.12
-    rxjs: ^6.0.0
-  peerDependenciesMeta:
-    cache-manager:
-      optional: true
-    class-transformer:
-      optional: true
-    class-validator:
-      optional: true
-  checksum: bb18eb9778e76a2003d51afab14e5564165f3650916eda4871e4d45c95dd12acc337b90e65e8ac35da674c35f2e11dbc820c6dbc044538cd80d63febee62c795
-  languageName: node
-  linkType: hard
-
 "@nestjs/config@npm:^0.6.1":
   version: 0.6.1
   resolution: "@nestjs/config@npm:0.6.1"
@@ -1974,35 +1949,6 @@ __metadata:
     "@nestjs/websockets":
       optional: true
   checksum: 60e083866aa63adc6bdf1a786f87eafe1e2dc134a6b8c1fa33f4f8764156c32a89d511332a3d4771bc3a855153ec2de25861ab224a91ea6d1050c9ef4e3db297
-  languageName: node
-  linkType: hard
-
-"@nestjs/core@npm:^7.5.1":
-  version: 7.6.17
-  resolution: "@nestjs/core@npm:7.6.17"
-  dependencies:
-    "@nuxtjs/opencollective": 0.3.2
-    fast-safe-stringify: 2.0.7
-    iterare: 1.2.1
-    object-hash: 2.1.1
-    path-to-regexp: 3.2.0
-    tslib: 2.2.0
-    uuid: 8.3.2
-  peerDependencies:
-    "@nestjs/common": ^7.0.0
-    "@nestjs/microservices": ^7.0.0
-    "@nestjs/platform-express": ^7.0.0
-    "@nestjs/websockets": ^7.0.0
-    reflect-metadata: ^0.1.12
-    rxjs: ^6.0.0
-  peerDependenciesMeta:
-    "@nestjs/microservices":
-      optional: true
-    "@nestjs/platform-express":
-      optional: true
-    "@nestjs/websockets":
-      optional: true
-  checksum: a5be9944898918e7e056e7e827211da600971a31343896861bdb2d4e070613a10b7cade36b276aac16adef62260077cd4eeacd0cfb5a8382ccaa11d66e19452d
   languageName: node
   linkType: hard
 
@@ -8382,12 +8328,12 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
-"nestjs-context@npm:^0.9.2":
-  version: 0.9.2
-  resolution: "nestjs-context@npm:0.9.2"
+"nestjs-context@npm:^0.10.0":
+  version: 0.10.0
+  resolution: "nestjs-context@npm:0.10.0"
   dependencies:
-    "@nestjs/common": ^7.5.1
-    "@nestjs/core": ^7.5.1
+    "@nestjs/common": ">=7.6.7"
+    "@nestjs/core": ">=7.6.7"
     "@nestjs/graphql": ^7.10.3
     "@nestjs/platform-express": ^7.5.1
     apollo-server-express: ^2.23.0
@@ -8398,7 +8344,10 @@ fsevents@~2.3.1:
     rimraf: ^3.0.2
     rxjs: ^6.6.3
     short-uuid: ^4.1.0
-  checksum: 1ec47b8c2b58a41c58f09f4829ab1f0f0d02abe865866754e5a938e79a69464ebd167137143805691c1678a681988f76c47838d32ca55099f3c9d8a62a8f1546
+  peerDependencies:
+    "@nestjs/common": ">=7.6.7"
+    "@nestjs/core": ">=7.6.7"
+  checksum: cc01b9f601c17a36ea24103cd223a22bf3ca57b476bf86df29d641f157e952763e5a1311bf390a7a0ffbaba8f5045b7d3c602a407852a15b113df81170e4a445
   languageName: node
   linkType: hard
 
@@ -8430,7 +8379,7 @@ fsevents@~2.3.1:
     jest-html-reporters: ^1.2.1
     lint-staged: 10.5.1
     lodash: ^4.17.20
-    nestjs-context: ^0.9.2
+    nestjs-context: ^0.10.0
     pino: ^6.7.0
     pino-pretty: ^4.3.0
     prettier: ^1.18.2
