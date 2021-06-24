@@ -16,7 +16,7 @@ const defaultLogFieldNames = {
 
 export class LoggerConfig implements LoggerConfigType {
   context = loggerContextConfig;
-  contextBlocklist: string[] = [];
+  labels = {} as Record<string, string>;
   loggerOptions = {};
   logFieldNames = defaultLogFieldNames;
 

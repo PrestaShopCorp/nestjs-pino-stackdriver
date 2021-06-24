@@ -36,10 +36,8 @@ export class Logger implements LoggerService {
       {
         [this.config.getFieldNameContext()]: context ?? this.context,
         [this.config.getFieldNameTrace()]: trace,
-        [this.config.getFieldNameLabels()]: pickBy(
-          this.executionContext.getAll(),
-          (value: any, key: string) =>
-            !this.config.contextBlocklist.includes(key),
+        [this.config.getFieldNameLabels()]: this.executionContext.createView(
+          this.config.labels,
         ),
       },
       (value: any) => !isEmpty(value),
