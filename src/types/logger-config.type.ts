@@ -5,7 +5,7 @@ import { PredefinedConfig } from '../enums';
 export type LoggerConfigType = {
   base?: PredefinedConfig;
   context?: ContextConfigType;
-  contextBlocklist?: string[];
+  labels?: Record<string, string>;
   loggerOptions?: LoggerOptions;
   logFieldNames?: {
     context?: string;

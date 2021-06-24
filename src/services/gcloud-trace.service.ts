@@ -51,7 +51,6 @@ export class GcloudTraceService {
     }
     return `projects/${project}/traces/${context.traceId}`;
   }
-
   /**
    * @todo Use getTraceUrl instead (we need context to accept promise-like props)
    */
