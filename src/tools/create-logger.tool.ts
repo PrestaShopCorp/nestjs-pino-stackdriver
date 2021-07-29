@@ -1,6 +1,7 @@
+import { v4 } from 'uuid';
 import * as path from 'path';
 import { INestApplication } from '@nestjs/common';
-import { Context } from 'nestjs-context';
+import { Context, RequestType } from 'nestjs-context';
 import { Logger } from '../services';
 import { LoggerConfig } from '../config';
 import { ModuleRegisterType } from '../types';
@@ -23,7 +24,11 @@ export const createLoggerTool: (
       context = configOrApp.get(Context);
     } else {
       const config = new LoggerConfig(configOrApp);
-      context = new Context(config.context);
+      context = new Context(
+        `System-Logger-${v4()}`,
+        config.context,
+        {} as RequestType,
+      );
     }
     logger = new Logger(config, context);
     logger.setContext(contextName);

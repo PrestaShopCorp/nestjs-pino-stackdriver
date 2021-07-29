@@ -1,7 +1,8 @@
+import { v4 } from 'uuid';
 import { Injectable, LoggerService, Scope, Optional } from '@nestjs/common';
 import * as createPinoLogger from 'pino';
 import { pickBy, isEmpty } from 'lodash';
-import { Context } from 'nestjs-context';
+import { Context, RequestType } from 'nestjs-context';
 import { LoggerConfig } from '../config';
 
 @Injectable({ scope: Scope.TRANSIENT })
@@ -12,7 +13,11 @@ export class Logger implements LoggerService {
     @Optional()
     private readonly config: LoggerConfig = new LoggerConfig(),
     @Optional()
-    private readonly executionContext: Context = new Context(config.context),
+    private readonly appContext: Context = new Context(
+      `Logger-${v4()}`,
+      config.context,
+      {} as RequestType,
+    ),
     @Optional() private logger = createPinoLogger(config.loggerOptions),
   ) {}
 
@@ -36,7 +41,7 @@ export class Logger implements LoggerService {
       {
         [this.config.getFieldNameContext()]: context ?? this.context,
         [this.config.getFieldNameTrace()]: trace,
-        [this.config.getFieldNameLabels()]: this.executionContext.createView(
+        [this.config.getFieldNameLabels()]: this.appContext.createView(
           this.config.labels,
         ),
       },

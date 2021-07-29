@@ -12,6 +12,15 @@ const prettyOptions = {
   colorize: true,
 } as PrettyOptions;
 
+const stackDriverErrorSeverityMapping = {
+  trace: 'DEBUG',
+  debug: 'DEBUG',
+  warn: 'WARNING',
+  info: 'INFO',
+  error: 'ERROR',
+  fatal: 'CRITICAL',
+};
+
 const loggerOptions = {
   // Already in stackdriver ignore
   timestamp: process.env.NODE_ENV !== 'production',
@@ -22,8 +31,8 @@ const loggerOptions = {
   // Tweaks to be compatible Stackdriver
   messageKey: 'message',
   formatters: {
-    level: () => {
-      return { level: 'severity' };
+    level: (lev: keyof typeof stackDriverErrorSeverityMapping, val) => {
+      return { severity: stackDriverErrorSeverityMapping[lev] };
     },
   },
 
