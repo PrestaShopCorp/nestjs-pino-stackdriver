@@ -13,7 +13,7 @@ async function bootstrap() {
   const app = await NestFactory.create(ExampleModule, {
     logger,
   });
-  app.useLogger(logger);
+  app.useLogger(createStackdriverLoggerTool(app as any));
   const configService = app.get(ConfigService);
   if (configService.get<string>('FORCE_REQUEST_TRACE') === 'true') {
     app.use(

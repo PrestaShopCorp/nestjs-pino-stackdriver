@@ -22,11 +22,12 @@ export const createStackdriverLoggerTool = (
   configOrApp: INestApplication | LoggerConfigType = {} as LoggerConfigType,
   contextName?: string,
 ) => {
-  if (!isNestApplication(configOrApp)) {
-    return createLoggerTool(
-      createStackdriverLoggerConfig(configOrApp),
-      contextName,
-    );
+  if (isNestApplication(configOrApp)) {
+    return createLoggerTool(configOrApp, contextName);
   }
-  return createLoggerTool(configOrApp, contextName);
+
+  return createLoggerTool(
+    createStackdriverLoggerConfig(configOrApp),
+    contextName,
+  );
 };

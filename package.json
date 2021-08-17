@@ -1,6 +1,6 @@
 {
   "name": "nestjs-pino-stackdriver",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "NestJS Pino logger with Stackdriver support",
   "author": "Jacob Dharandas Méndez <j.dharandas@gmail.com>",
   "license": "MIT",

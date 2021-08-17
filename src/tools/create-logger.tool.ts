@@ -23,10 +23,10 @@ export const createLoggerTool: (
       config = configOrApp.get(LoggerConfig);
       context = configOrApp.get(Context);
     } else {
-      const config = new LoggerConfig(configOrApp);
+      config = new LoggerConfig(configOrApp);
       context = new Context(
         `System-Logger-${v4()}`,
-        config.context,
+        config?.context || {},
         {} as RequestType,
       );
     }
