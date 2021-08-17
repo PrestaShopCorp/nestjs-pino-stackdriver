@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ExampleModule } from './example.module';
 import {
@@ -10,10 +10,10 @@ import {
 
 async function bootstrap() {
   const logger = createStackdriverLoggerTool();
-  const app = await NestFactory.create(ExampleModule, {
+  const app: INestApplication = await NestFactory.create(ExampleModule, {
     logger,
   });
-  app.useLogger(createStackdriverLoggerTool(app as any));
+  app.useLogger(createStackdriverLoggerTool(app));
   const configService = app.get(ConfigService);
   if (configService.get<string>('FORCE_REQUEST_TRACE') === 'true') {
     app.use(

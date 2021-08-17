@@ -1,5 +1,4 @@
 import { isEmpty } from 'lodash';
-import { INestApplication } from '@nestjs/common';
 import {
   LoggerConfigType,
   createLoggerTool,
@@ -7,6 +6,7 @@ import {
   ModuleRegisterType,
   PredefinedConfig,
 } from '..';
+import { INestApplicationContext } from '@nestjs/common/interfaces/nest-application-context.interface';
 
 export const createStackdriverLoggerConfig: (
   config: LoggerConfigType,
@@ -19,7 +19,9 @@ export const createStackdriverLoggerConfig: (
       } as LoggerConfigType);
 
 export const createStackdriverLoggerTool = (
-  configOrApp: INestApplication | LoggerConfigType = {} as LoggerConfigType,
+  configOrApp:
+    | INestApplicationContext
+    | LoggerConfigType = {} as LoggerConfigType,
   contextName?: string,
 ) => {
   if (isNestApplication(configOrApp)) {

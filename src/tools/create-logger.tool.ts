@@ -1,17 +1,19 @@
 import { v4 } from 'uuid';
 import * as path from 'path';
-import { INestApplication } from '@nestjs/common';
 import { Context, RequestType } from 'nestjs-context';
 import { Logger } from '../services';
 import { LoggerConfig } from '../config';
 import { ModuleRegisterType } from '../types';
 import { isNestApplication } from '../type-guards';
+import { INestApplicationContext } from '@nestjs/common/interfaces/nest-application-context.interface';
 
 export const createLoggerTool: (
-  configOrApp: INestApplication | ModuleRegisterType,
+  configOrApp: INestApplicationContext | ModuleRegisterType,
   contextName?: string,
 ) => Logger = (
-  configOrApp: INestApplication | ModuleRegisterType = {} as ModuleRegisterType,
+  configOrApp:
+    | INestApplicationContext
+    | ModuleRegisterType = {} as ModuleRegisterType,
   contextName = process.argv[1]
     ? path.basename(process.argv[1], path.extname(process.argv[1]))
     : path.basename(__filename),
