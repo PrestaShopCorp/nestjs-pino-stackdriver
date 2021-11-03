@@ -34,7 +34,7 @@ export const correlationIdMiddleware: (
     res.set(header, correlationId);
 
     // save correlation id in context
-    if (context) {
+    if (context && context.set) {
       context.set(CONTEXT_CORRELATION_ID, correlationId);
     }
 
