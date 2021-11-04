@@ -1,23 +1,23 @@
 import {
+  CallHandler,
+  ExecutionContext,
   Injectable,
   NestInterceptor,
-  ExecutionContext,
-  CallHandler,
 } from '@nestjs/common';
+import { set } from 'lodash';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { pickFromRequestTool } from '../../nestjs-ps-tools';
 import { Context } from '../../nestjs-context';
+import { pickFromRequestTool } from '../../nestjs-ps-tools';
 import { CONTEXT_PINO_LOGGER_REQUEST } from './constants';
+import { LogFieldsConfigKey } from './enums';
 import { PinoContextConfig } from './pino-context.config';
+import { hasConfiguration } from './type-guards';
 import {
   LogFieldsConfigKeyOptionType,
   LogFieldsConfigPartRequestType,
   RequestFilterType,
 } from './types';
-import { hasConfiguration } from './type-guards';
-import { set } from 'lodash';
-import { LogFieldsConfigKey } from './enums';
 
 @Injectable()
 export class PinoContextRequestInterceptor implements NestInterceptor {
@@ -31,9 +31,10 @@ export class PinoContextRequestInterceptor implements NestInterceptor {
     const request = httpContext.getRequest();
     this.addContextRequestValues(request);
     return next.handle().pipe(
-      tap(() =>
-        // clear context value
-        this.context.set(CONTEXT_PINO_LOGGER_REQUEST, {}),
+      tap(
+        () =>
+          // clear context value
+          this.context.set && this.context.set(CONTEXT_PINO_LOGGER_REQUEST, {}),
       ),
     );
   }
@@ -65,7 +66,8 @@ export class PinoContextRequestInterceptor implements NestInterceptor {
     Object.values(pickFromRequestTool(request, pick)).forEach(value => {
       const reqLabels = this.context.get(CONTEXT_PINO_LOGGER_REQUEST) || {};
       set(reqLabels, [configFieldsKey, label], value);
-      this.context.set(CONTEXT_PINO_LOGGER_REQUEST, reqLabels);
+      this.context.set &&
+        this.context.set(CONTEXT_PINO_LOGGER_REQUEST, reqLabels);
     });
   }
 }
