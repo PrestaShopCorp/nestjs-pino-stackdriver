@@ -43,9 +43,7 @@ export const createLoggerTool: (
     logger = new Logger();
     logger.setContext(contextName);
     logger.warn(
-      `Could not create ${
-        Logger.name
-      } into the given context. Reason: ${e.toString()}`,
+      `Could not create ${Logger.name} into the given context. Reason: ${e}`,
     );
   }
   logger.setContext(contextName);
