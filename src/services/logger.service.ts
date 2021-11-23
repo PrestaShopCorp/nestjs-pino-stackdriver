@@ -8,7 +8,8 @@ import { LoggerConfig } from '../config';
 @Injectable({ scope: Scope.TRANSIENT })
 export class Logger implements LoggerService {
   private context: string;
-  private customLabels: Record<string, any> = {};
+  private customLabels: Record<string, any>;
+  private _autoResetCustomLabels: boolean;
 
   constructor(
     @Optional()
@@ -20,7 +21,14 @@ export class Logger implements LoggerService {
       {} as RequestType,
     ),
     @Optional() private logger = createPinoLogger(config.loggerOptions),
-  ) {}
+  ) {
+    this.customLabels = {};
+    this.autoResetCustomLabels = false;
+  }
+
+  set autoResetCustomLabels(value: boolean) {
+    this._autoResetCustomLabels = value;
+  }
 
   setContext(context: string): void {
     // this.logger = this.logger.child({ context: context });
@@ -49,7 +57,9 @@ export class Logger implements LoggerService {
       },
       (value: any) => !isEmpty(value),
     );
-    this.clearLabels();
+    if (this._autoResetCustomLabels) {
+      this.clearLabels();
+    }
     return returned;
   }
 
