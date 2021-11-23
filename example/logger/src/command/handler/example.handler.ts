@@ -7,8 +7,11 @@ export class ExampleHandler implements ICommandHandler<ExampleCommand> {
   constructor(private readonly logger: Logger) {}
 
   async execute(command: ExampleCommand) {
+    this.logger.setLabel(
+      'my-custom-label',
+      'my-custom-label for my logger.error',
+    );
     this.logger.error(new Error('Handler error with class-defined context'));
-
     this.logger.log(
       'An interpolation message: %o hello %s',
       undefined,

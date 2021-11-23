@@ -66,6 +66,10 @@ export class ExampleController {
       sample: 'another field',
     });
     this.logger.warn('Warning passing custom context', 'custom-context');
+    this.logger.setLabel(
+            'my-custom-label',
+            'my-custom-label for my logger.error',
+    );
     this.logger.error(
       'Error',
       `An error trace`,

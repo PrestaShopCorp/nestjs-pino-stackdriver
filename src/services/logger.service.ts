@@ -8,6 +8,7 @@ import { LoggerConfig } from '../config';
 @Injectable({ scope: Scope.TRANSIENT })
 export class Logger implements LoggerService {
   private context: string;
+  private customLabels: Record<string, any> = {};
 
   constructor(
     @Optional()
@@ -37,16 +38,27 @@ export class Logger implements LoggerService {
     context?: string;
     trace?: string;
   }) {
-    return pickBy(
+    const returned = pickBy(
       {
         [this.config.getFieldNameContext()]: context ?? this.context,
         [this.config.getFieldNameTrace()]: trace,
-        [this.config.getFieldNameLabels()]: this.appContext.createView(
-          this.config.labels,
-        ),
+        [this.config.getFieldNameLabels()]: {
+          ...this.appContext.createView(this.config.labels),
+          ...this.customLabels,
+        },
       },
       (value: any) => !isEmpty(value),
     );
+    this.clearLabels();
+    return returned;
+  }
+
+  setLabel(key: string, value: any) {
+    this.customLabels[key] = value;
+  }
+
+  clearLabels() {
+    this.customLabels = {};
   }
 
   verbose(message: any, context?: string, ...args: any[]) {
