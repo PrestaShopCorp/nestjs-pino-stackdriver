@@ -1,5 +1,5 @@
 import { DynamicModule, Module } from '@nestjs/common';
-import { DiscoveryModule } from '@nestjs/core';
+import {DiscoveryModule} from '@nestjs/core';
 
 import { Logger, SetContextExplorer } from './services';
 import { ModuleRegisterType } from './types';

@@ -1,9 +1,9 @@
 import { v4 } from 'uuid';
 import { Injectable, LoggerService, Scope, Optional } from '@nestjs/common';
-import * as createPinoLogger from 'pino';
 import { pickBy, isEmpty } from 'lodash';
 import { Context, RequestType } from 'nestjs-context';
 import { LoggerConfig } from '../config';
+import pino from "pino";
 
 @Injectable({ scope: Scope.TRANSIENT })
 export class Logger implements LoggerService {
@@ -20,7 +20,7 @@ export class Logger implements LoggerService {
       config.context,
       {} as RequestType,
     ),
-    @Optional() private logger = createPinoLogger(config.loggerOptions),
+    @Optional() private logger = pino(config.loggerOptions),
   ) {
     this.customLabels = {};
     this.autoResetCustomLabels = false;
